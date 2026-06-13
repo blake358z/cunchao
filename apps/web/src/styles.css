@@ -1,0 +1,103 @@
+:root {
+  color: #111318;
+  background: #f6f7fa;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: #eef0f4; }
+button { border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid rgba(230, 50, 42, .35); outline-offset: 2px; }
+.app-viewport { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+.phone-shell { position: relative; width: min(390px, 100vw); height: min(844px, calc(100vh - 24px)); background: #f6f7fa; overflow: hidden; border-radius: 26px; box-shadow: 0 24px 60px rgba(16, 24, 40, .18); }
+.top { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 1px solid #e7e9ee; }
+.status { height: 44px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding: 0 20px; font-size: 12px; }
+.status strong { text-align: center; font-size: 13px; }
+.bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 18px; }
+.bar svg, .bottom-nav svg { color: #e6322a; }
+.ghost { color: #6b7280; font-size: 13px; }
+.screen { height: calc(100% - 88px); overflow: auto; padding-bottom: 104px; }
+.page-content { padding: 14px 16px 24px; }
+.bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; display: grid; grid-template-columns: repeat(5, 1fr); background: #fff; border-top: 1px solid #e7e9ee; z-index: 6; }
+.bottom-nav button { display: grid; gap: 4px; place-items: center; align-content: center; color: #747985; font-size: 11px; }
+.bottom-nav button.active { color: #e6322a; font-weight: 700; }
+.hero-card { position: relative; display: block; width: 100%; height: 138px; overflow: hidden; border-radius: 10px; text-align: left; color: #fff; background: #111; }
+.hero-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-card::after { content: ""; position: absolute; inset: 58% 0 0; background: linear-gradient(transparent, rgba(0,0,0,.68)); }
+.hero-card div { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 1; }
+h1, h2, h3, p { margin: 0; }
+.hero-card h1 { font-size: 18px; line-height: 22px; }
+.hero-card p, .hint, .meta { margin-top: 6px; color: #6f7580; font-size: 12px; line-height: 16px; }
+.hero-card p { color: #fff; opacity: .9; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 10px; scrollbar-width: none; }
+.chips button { flex: 0 0 auto; min-width: 58px; height: 28px; padding: 0 12px; border-radius: 999px; background: #fff; border: 1px solid #e5e7eb; font-size: 12px; font-weight: 600; }
+.chips button.selected, .booking button:first-of-type, .team-head button { background: #e6322a; color: #fff; border-color: #e6322a; }
+.compact { padding: 10px 0; gap: 6px; }
+.compact button { min-width: 52px; padding: 0 10px; }
+.list-card { width: 100%; background: #fff; border: 1px solid #e7e9ee; border-radius: 8px; box-shadow: 0 1px 0 rgba(16,24,40,.02); }
+.article-row { padding: 0; margin-bottom: 10px; overflow: hidden; }
+.article-row > button { width: 100%; display: grid; grid-template-columns: 1fr 80px; gap: 12px; padding: 12px; text-align: left; }
+.article-row img { width: 80px; height: 60px; border-radius: 6px; object-fit: cover; }
+.article-row h3, .post-card h3 { font-size: 15px; line-height: 20px; }
+.article-row p, .post-card p, .post-card span, .team-head p, .body-copy, .events p { color: #6f7580; font-size: 12px; line-height: 16px; margin-top: 8px; }
+.action-line { display: flex; gap: 18px; padding: 0 12px 12px; color: #e6322a; font-size: 12px; font-weight: 700; }
+.prominent { padding: 12px 0 0; }
+.league-carousel { display: flex; gap: 12px; overflow-x: auto; padding: 12px 0 18px; scrollbar-width: none; }
+.league-card { flex: 0 0 172px; height: 96px; padding: 14px; text-align: left; border: 1px solid #e7e9ee; border-radius: 10px; background: #fff; display: grid; gap: 8px; }
+.league-card.selected { border-color: #e6322a; }
+.league-card strong { font-size: 17px; }
+.league-card span, .live { color: #e6322a; font-weight: 800; }
+.league-card small { color: #6f7580; }
+.section-title { margin: 16px 4px 10px; font-size: 16px; line-height: 20px; }
+.match-card { position: relative; min-height: 76px; margin-bottom: 10px; padding: 15px 14px 28px; display: grid; grid-template-columns: 1fr 116px 1fr; align-items: center; text-align: center; }
+.match-card span { font-size: 14px; font-weight: 700; }
+.match-card strong { font-size: 18px; white-space: nowrap; }
+.match-card small { position: absolute; left: 0; right: 0; bottom: 12px; color: #6f7580; font-size: 11px; }
+.standings { padding: 10px 14px; }
+.standings button { width: 100%; display: grid; grid-template-columns: 28px 1fr 56px; align-items: center; min-height: 28px; text-align: left; }
+.standings em { font-style: normal; color: #e6322a; font-weight: 800; text-align: right; }
+.scoreboard { text-align: center; padding: 12px 0 18px; display: grid; grid-template-columns: 1fr 96px 1fr; align-items: center; }
+.scoreboard strong { color: #e6322a; font-size: 32px; }
+.scoreboard p { grid-column: 1 / -1; color: #e6322a; font-size: 12px; font-weight: 700; margin-top: 4px; }
+.events { padding: 14px; }
+.comments { display: grid; gap: 10px; }
+.comment { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 8px; }
+.mini-avatar, .avatar { width: 28px; height: 28px; border-radius: 50%; background: #edf0f5; }
+.comment strong { font-size: 12px; }
+.comment p { margin: 5px 0 8px; font-size: 13px; line-height: 18px; }
+.comment button { margin-right: 14px; color: #6f7580; font-size: 11px; font-weight: 700; }
+.scroll-hint { color: #99a0ad; text-align: center; font-size: 11px; padding: 12px 0; }
+.team-head, .profile-card { display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; border: 1px solid #e7e9ee; padding: 16px 14px; }
+.team-head h2, .profile-card h2 { font-size: 18px; }
+.team-head button { border-radius: 999px; padding: 8px 14px; font-size: 12px; font-weight: 800; }
+.player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.player-grid .list-card { padding: 14px; font-size: 13px; font-weight: 700; }
+.post-card { display: block; text-align: left; padding: 16px 14px; margin-bottom: 10px; }
+.travel-card { background: #fff; border-radius: 8px; border: 1px solid #e7e9ee; padding-bottom: 14px; overflow: hidden; }
+.travel-card img, .detail-image { width: 100%; height: 150px; object-fit: cover; display: block; border-radius: 8px; }
+.travel-card h3, .travel-card p { padding: 12px 14px 0; }
+.travel-card h3 { font-size: 15px; line-height: 20px; }
+.travel-card p { color: #6f7580; font-size: 12px; line-height: 17px; }
+.booking { padding: 14px; }
+.booking h3 { font-size: 15px; }
+.booking p { color: #6f7580; margin: 8px 0 14px; font-size: 12px; }
+.booking button { height: 28px; padding: 0 14px; border-radius: 999px; border: 1px solid #e7e9ee; margin-right: 8px; font-size: 12px; font-weight: 700; }
+.team-strip { display: flex; gap: 8px; overflow: auto; }
+.team-strip button { flex: 0 0 auto; padding: 10px 12px; background: #fff; border: 1px solid #e7e9ee; border-radius: 8px; font-weight: 700; }
+.activity { padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; }
+.activity span { font-size: 13px; color: #3d424c; }
+.activity strong { color: #e6322a; font-size: 12px; }
+.detail-title { margin: 14px 0 8px; font-size: 22px; line-height: 28px; }
+.body-copy, .post-main div { margin-top: 16px; color: #30343b; font-size: 14px; line-height: 22px; }
+.post-main { padding: 16px 14px; }
+.post-main h1 { font-size: 19px; line-height: 25px; }
+.post-main strong { display: block; margin-top: 14px; color: #e6322a; font-size: 12px; }
+.primary-wide { width: 100%; height: 42px; border-radius: 8px; background: #111318; color: #fff; font-weight: 800; margin-top: 14px; }
+.toast { position: absolute; left: 20px; right: 20px; bottom: 86px; z-index: 10; background: rgba(17, 19, 24, .92); color: #fff; border-radius: 10px; padding: 12px; text-align: center; font-size: 13px; }
+.loading { padding: 80px 20px; color: #6f7580; text-align: center; }
+@media (max-width: 520px) {
+  .app-viewport { padding: 0; }
+  .phone-shell { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+}

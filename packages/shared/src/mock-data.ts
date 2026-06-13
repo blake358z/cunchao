@@ -1,0 +1,271 @@
+import type {
+  BookingEvent,
+  Comment,
+  ContentItem,
+  League,
+  Match,
+  Post,
+  StandingRow,
+  Team,
+  TravelGuide,
+  UserActivity
+} from "./index.js";
+
+export const leagues: League[] = [
+  {
+    id: "gzcunchao",
+    name: "贵州村超",
+    shortName: "村超",
+    type: "village",
+    region: "贵州榕江",
+    season: "2026",
+    description: "以村寨球队、民族文化展演和群众足球为核心的全国热门乡村足球赛事。",
+    liveHint: "正在进行：车江二村 1-0 寨蒿",
+    nextHint: "明天 19:30 忠诚 vs 平永"
+  },
+  {
+    id: "js-super",
+    name: "江苏苏超",
+    shortName: "苏超",
+    type: "city",
+    region: "江苏",
+    season: "2026",
+    description: "以城市队、主客场和城市德比为主要叙事的群众足球赛事。",
+    nextHint: "今天 20:00 南京 vs 苏州"
+  },
+  {
+    id: "qh-youth",
+    name: "青海青超",
+    shortName: "青超",
+    type: "provincial",
+    region: "青海",
+    season: "2026",
+    description: "高原地区城市与州队共同参与的区域足球赛事。",
+    nextHint: "周日 16:00 西宁 vs 海东"
+  },
+  {
+    id: "jx-super",
+    name: "江西赣超",
+    shortName: "赣超",
+    type: "provincial",
+    region: "江西",
+    season: "2026",
+    description: "连接城市足球、县域文化和地方文旅的新兴赛事。",
+    nextHint: "6月18日 南昌 vs 九江"
+  }
+];
+
+export const teams: Team[] = [
+  {
+    id: "team-chejiang",
+    leagueId: "gzcunchao",
+    name: "车江二村代表队",
+    village: "榕江县车江片区",
+    record: "6胜1平",
+    goalsFor: 18,
+    intro: "球队由本村青年和返乡球员组成，边路推进和高位逼抢是本赛季的鲜明特点。",
+    honors: ["2025赛季八强", "2026预选赛小组第一"]
+  },
+  {
+    id: "team-zhaigao",
+    leagueId: "gzcunchao",
+    name: "寨蒿队",
+    village: "寨蒿镇",
+    record: "5胜1负",
+    goalsFor: 14,
+    intro: "反击速度快，擅长利用边路空间创造机会。",
+    honors: ["2024赛季人气球队"]
+  },
+  {
+    id: "team-zhongcheng",
+    leagueId: "gzcunchao",
+    name: "忠诚队",
+    village: "忠诚镇",
+    record: "5胜1平",
+    goalsFor: 16,
+    intro: "阵型稳定，防守反击转换效率高。",
+    honors: ["2026预选赛不败球队"]
+  },
+  {
+    id: "team-pingyong",
+    leagueId: "gzcunchao",
+    name: "平永队",
+    village: "平永镇",
+    record: "4胜2平",
+    goalsFor: 12,
+    intro: "中场控球能力强，擅长阵地推进。",
+    honors: ["2025公平竞赛奖"]
+  }
+];
+
+export const matches: Match[] = [
+  {
+    id: "match-live-1",
+    leagueId: "gzcunchao",
+    homeTeamId: "team-chejiang",
+    awayTeamId: "team-zhaigao",
+    homeTeam: "车江二村",
+    awayTeam: "寨蒿队",
+    venue: "榕江一号场",
+    startsAt: "2026-06-13T19:30:00+08:00",
+    status: "live",
+    score: { home: 2, away: 1 },
+    minute: 68
+  },
+  {
+    id: "match-next-1",
+    leagueId: "gzcunchao",
+    homeTeamId: "team-zhongcheng",
+    awayTeamId: "team-pingyong",
+    homeTeam: "忠诚队",
+    awayTeam: "平永队",
+    venue: "榕江一号场",
+    startsAt: "2026-06-15T19:30:00+08:00",
+    status: "scheduled"
+  },
+  {
+    id: "match-next-2",
+    leagueId: "gzcunchao",
+    homeTeamId: "team-dali",
+    awayTeamId: "team-leli",
+    homeTeam: "大利队",
+    awayTeam: "乐里队",
+    venue: "榕江一号场",
+    startsAt: "2026-06-16T16:00:00+08:00",
+    status: "scheduled"
+  },
+  {
+    id: "match-js-1",
+    leagueId: "js-super",
+    homeTeamId: "team-nanjing",
+    awayTeamId: "team-suzhou",
+    homeTeam: "南京队",
+    awayTeam: "苏州队",
+    venue: "南京奥体中心",
+    startsAt: "2026-06-13T20:00:00+08:00",
+    status: "scheduled"
+  }
+];
+
+export const standings: StandingRow[] = [
+  { teamId: "team-chejiang", rank: 1, teamName: "车江二村", played: 7, won: 6, drawn: 1, lost: 0, points: 19 },
+  { teamId: "team-zhongcheng", rank: 2, teamName: "忠诚队", played: 6, won: 5, drawn: 1, lost: 0, points: 16 },
+  { teamId: "team-zhaigao", rank: 3, teamName: "寨蒿队", played: 6, won: 5, drawn: 0, lost: 1, points: 15 }
+];
+
+export const contents: ContentItem[] = [
+  {
+    id: "article-weekend",
+    type: "article",
+    title: "榕江赛区周末关键战：20强席位进入最后争夺",
+    summary: "本轮比赛将决定多个小组的出线形势，现场预约入口已同步开放。",
+    source: "村超官方",
+    leagueId: "gzcunchao",
+    image: "/assets/football-action.jpg",
+    likes: 238,
+    comments: 64,
+    favorites: 31,
+    publishedAt: "2026-06-13T10:00:00+08:00",
+    body: "本轮比赛将决定多个小组的出线形势。车江二村、忠诚队、寨蒿队都将在周末迎来直接对话，现场预约入口已同步开放。"
+  },
+  {
+    id: "article-derby",
+    type: "news",
+    title: "苏超城市德比升温：南京队主场预约通道已开放",
+    summary: "城市德比带动本地看球和短途出行热度。",
+    source: "苏超观察",
+    leagueId: "js-super",
+    image: "/assets/football-crowd.jpg",
+    likes: 186,
+    comments: 42,
+    favorites: 20,
+    publishedAt: "2026-06-13T09:20:00+08:00"
+  },
+  {
+    id: "travel-sanbao",
+    type: "travel",
+    title: "跟着比赛去旅行：三宝侗寨一日路线更新",
+    summary: "赛前吃酸汤鱼，赛后看侗族大歌，适合第一次到榕江看球的游客。",
+    source: "文旅攻略",
+    leagueId: "gzcunchao",
+    image: "/assets/village-scene.jpg",
+    likes: 92,
+    comments: 18,
+    favorites: 55,
+    publishedAt: "2026-06-12T18:00:00+08:00"
+  }
+];
+
+export const comments: Comment[] = [
+  { id: "comment-1", author: "阿亮", body: "这类赛前信息很有用，最好能直接关联预约入口。", likes: 48, replies: 9, createdAt: "2小时前" },
+  { id: "comment-2", author: "球场边", body: "积分形势图可以再做成可滑动卡片。", likes: 31, replies: 5, createdAt: "1小时前" },
+  { id: "comment-3", author: "榕江看球人", body: "这场节奏很快，寨蒿队边路压得很靠前。", likes: 45, replies: 12, createdAt: "刚刚" }
+];
+
+export const posts: Post[] = [
+  {
+    id: "post-wing",
+    title: "车江二村这场边路推进是不是本轮最佳？",
+    author: "榕江看球人",
+    body: "现场看下来，他们两个边前卫的回撤和前插很默契，尤其下半场连续三次从右路制造威胁。大家觉得这套踢法能撑到淘汰赛吗？",
+    leagueId: "gzcunchao",
+    teamId: "team-chejiang",
+    likes: 328,
+    comments: 86,
+    favorites: 42,
+    createdAt: "2小时前"
+  },
+  {
+    id: "post-parking",
+    title: "第一次来榕江看球，停车和入场有哪些坑？",
+    author: "小吴",
+    body: "准备周末带家人去，有没有更方便的入场路线？",
+    leagueId: "gzcunchao",
+    likes: 124,
+    comments: 39,
+    favorites: 61,
+    createdAt: "今天"
+  },
+  {
+    id: "post-compare",
+    title: "苏超城市德比的气氛，和村超有什么不同？",
+    author: "城市球迷",
+    body: "两种赛事气质都很鲜明，大家聊聊差异。",
+    leagueId: "js-super",
+    likes: 210,
+    comments: 74,
+    favorites: 28,
+    createdAt: "昨天"
+  }
+];
+
+export const travelGuides: TravelGuide[] = [
+  {
+    id: "guide-sanbao",
+    title: "三宝侗寨路线：赛前吃酸汤鱼，赛后看侗族大歌",
+    leagueId: "gzcunchao",
+    region: "榕江",
+    image: "/assets/village-scene.jpg",
+    summary: "支持按联赛、球队、附近、热门村寨搜索，不把几百个村寨平铺在顶部。",
+    tags: ["附近", "热门村寨", "球队筛选"]
+  }
+];
+
+export const bookingEvents: BookingEvent[] = [
+  {
+    id: "booking-1",
+    matchId: "match-next-1",
+    title: "贵州村超 · 忠诚队 vs 平永队",
+    venue: "榕江一号场",
+    startsAt: "2026-06-15T19:30:00+08:00",
+    availability: "available",
+    provider: "official"
+  }
+];
+
+export const activities: UserActivity[] = [
+  { id: "act-1", type: "comment", title: "评论/回帖：可找回参与过的资讯与帖子", targetType: "post", createdAt: "今天" },
+  { id: "act-2", type: "like", title: "点赞记录：包括资讯、帖子、评论", targetType: "article", createdAt: "昨天" },
+  { id: "act-3", type: "favorite", title: "收藏内容：攻略、比赛、深度帖", targetType: "travel", createdAt: "本周" },
+  { id: "act-4", type: "history", title: "浏览历史：最近看过的球队和比赛", targetType: "team", createdAt: "本周" }
+];
