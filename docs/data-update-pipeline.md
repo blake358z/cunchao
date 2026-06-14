@@ -112,3 +112,5 @@ npx vercel --prod --yes --no-wait --force
 ```
 
 这样每日任务会触发一次 Vercel 生产部署，由 Vercel 云端按仓库源码构建。用户打开 Vercel 地址时，可以看到当天更新后的 `bootstrap.json`。旧新闻会继续保留在生成文件里，新的新闻排在前面。
+
+注意：数据更新本身不能被 Vercel 临时部署错误阻断，所以 workflow 中 Vercel deploy 是尽力触发。若 Vercel 返回平台侧 `deployment-error`，当天的数据仍会提交到 GitHub，部署问题需要在 Vercel Dashboard 或项目设置里排查。
