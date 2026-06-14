@@ -1,0 +1,4 @@
+{
+  "description": "临时结构化赛程入口。拿到官方表格/API 前，可在这里人工维护关键比赛；自动抓取脚本会把这些比赛合并进 bootstrap.json。",
+  "matches": []
+}

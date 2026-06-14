@@ -1,0 +1,42 @@
+name: Update Public Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 0 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-public-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build --workspace @cunchao/shared
+
+      - name: Update public data
+        run: node scripts/update-public-data.mjs
+
+      - name: Validate web build
+        run: npm run build --workspace @cunchao/web
+
+      - name: Commit data changes
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "Update public data"
+          file_pattern: apps/web/public/data/bootstrap.json

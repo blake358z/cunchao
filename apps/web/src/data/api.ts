@@ -17,7 +17,7 @@ const fallback: BootstrapData = {
 
 export async function fetchBootstrap(): Promise<BootstrapData> {
   try {
-    const response = await fetch("/api/bootstrap");
+    const response = await fetch("/data/bootstrap.json", { cache: "no-store" });
     if (!response.ok) throw new Error(`API ${response.status}`);
     const payload = (await response.json()) as ApiEnvelope<BootstrapData>;
     return payload.data;
@@ -25,4 +25,3 @@ export async function fetchBootstrap(): Promise<BootstrapData> {
     return fallback;
   }
 }
-

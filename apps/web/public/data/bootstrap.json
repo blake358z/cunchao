@@ -1,0 +1,516 @@
+{
+  "data": {
+    "leagues": [
+      {
+        "id": "gzcunchao",
+        "name": "贵州村超",
+        "shortName": "村超",
+        "type": "village",
+        "region": "贵州榕江",
+        "season": "2026",
+        "description": "以村寨球队、民族文化展演和群众足球为核心的全国热门乡村足球赛事。",
+        "liveHint": "正在进行：车江二村 1-0 寨蒿",
+        "nextHint": "本周六，贵州村超冠军赛第四轮打响"
+      },
+      {
+        "id": "js-super",
+        "name": "江苏苏超",
+        "shortName": "苏超",
+        "type": "city",
+        "region": "江苏",
+        "season": "2026",
+        "description": "以城市队、主客场和城市德比为主要叙事的群众足球赛事。",
+        "nextHint": "今天 20:00 南京 vs 苏州"
+      },
+      {
+        "id": "qh-youth",
+        "name": "青海青超",
+        "shortName": "青超",
+        "type": "provincial",
+        "region": "青海",
+        "season": "2026",
+        "description": "高原地区城市与州队共同参与的区域足球赛事。",
+        "nextHint": "周日 16:00 西宁 vs 海东"
+      },
+      {
+        "id": "jx-super",
+        "name": "江西赣超",
+        "shortName": "赣超",
+        "type": "provincial",
+        "region": "江西",
+        "season": "2026",
+        "description": "连接城市足球、县域文化和地方文旅的新兴赛事。",
+        "nextHint": "6月18日 南昌 vs 九江"
+      }
+    ],
+    "matches": [
+      {
+        "id": "match-live-1",
+        "leagueId": "gzcunchao",
+        "homeTeamId": "team-chejiang",
+        "awayTeamId": "team-zhaigao",
+        "homeTeam": "车江二村",
+        "awayTeam": "寨蒿队",
+        "venue": "榕江一号场",
+        "startsAt": "2026-06-13T19:30:00+08:00",
+        "status": "live",
+        "score": {
+          "home": 2,
+          "away": 1
+        },
+        "minute": 68
+      },
+      {
+        "id": "match-next-1",
+        "leagueId": "gzcunchao",
+        "homeTeamId": "team-zhongcheng",
+        "awayTeamId": "team-pingyong",
+        "homeTeam": "忠诚队",
+        "awayTeam": "平永队",
+        "venue": "榕江一号场",
+        "startsAt": "2026-06-15T19:30:00+08:00",
+        "status": "scheduled"
+      },
+      {
+        "id": "match-next-2",
+        "leagueId": "gzcunchao",
+        "homeTeamId": "team-dali",
+        "awayTeamId": "team-leli",
+        "homeTeam": "大利队",
+        "awayTeam": "乐里队",
+        "venue": "榕江一号场",
+        "startsAt": "2026-06-16T16:00:00+08:00",
+        "status": "scheduled"
+      },
+      {
+        "id": "match-js-1",
+        "leagueId": "js-super",
+        "homeTeamId": "team-nanjing",
+        "awayTeamId": "team-suzhou",
+        "homeTeam": "南京队",
+        "awayTeam": "苏州队",
+        "venue": "南京奥体中心",
+        "startsAt": "2026-06-13T20:00:00+08:00",
+        "status": "scheduled"
+      }
+    ],
+    "teams": [
+      {
+        "id": "team-chejiang",
+        "leagueId": "gzcunchao",
+        "name": "车江二村代表队",
+        "village": "榕江县车江片区",
+        "record": "6胜1平",
+        "goalsFor": 18,
+        "intro": "球队由本村青年和返乡球员组成，边路推进和高位逼抢是本赛季的鲜明特点。",
+        "honors": [
+          "2025赛季八强",
+          "2026预选赛小组第一"
+        ]
+      },
+      {
+        "id": "team-zhaigao",
+        "leagueId": "gzcunchao",
+        "name": "寨蒿队",
+        "village": "寨蒿镇",
+        "record": "5胜1负",
+        "goalsFor": 14,
+        "intro": "反击速度快，擅长利用边路空间创造机会。",
+        "honors": [
+          "2024赛季人气球队"
+        ]
+      },
+      {
+        "id": "team-zhongcheng",
+        "leagueId": "gzcunchao",
+        "name": "忠诚队",
+        "village": "忠诚镇",
+        "record": "5胜1平",
+        "goalsFor": 16,
+        "intro": "阵型稳定，防守反击转换效率高。",
+        "honors": [
+          "2026预选赛不败球队"
+        ]
+      },
+      {
+        "id": "team-pingyong",
+        "leagueId": "gzcunchao",
+        "name": "平永队",
+        "village": "平永镇",
+        "record": "4胜2平",
+        "goalsFor": 12,
+        "intro": "中场控球能力强，擅长阵地推进。",
+        "honors": [
+          "2025公平竞赛奖"
+        ]
+      }
+    ],
+    "standings": [
+      {
+        "teamId": "team-chejiang",
+        "rank": 1,
+        "teamName": "车江二村",
+        "played": 7,
+        "won": 6,
+        "drawn": 1,
+        "lost": 0,
+        "points": 19
+      },
+      {
+        "teamId": "team-zhongcheng",
+        "rank": 2,
+        "teamName": "忠诚队",
+        "played": 6,
+        "won": 5,
+        "drawn": 1,
+        "lost": 0,
+        "points": 16
+      },
+      {
+        "teamId": "team-zhaigao",
+        "rank": 3,
+        "teamName": "寨蒿队",
+        "played": 6,
+        "won": 5,
+        "drawn": 0,
+        "lost": 1,
+        "points": 15
+      }
+    ],
+    "contents": [
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202606-t20260611-90512645-html",
+        "type": "article",
+        "title": "本周六，贵州村超冠军赛第四轮打响",
+        "summary": "本周六，贵州村超冠军赛第四轮打响",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-action.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2026-06-11T09:37:18+08:00",
+        "body": "本周六，贵州村超冠军赛第四轮打响\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202606/t20260611_90512645.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202604-t20260421-90027285-html",
+        "type": "article",
+        "title": "五一假期，村超狂欢预定！5月1日20强揭幕战，利比里亚队卷土重来，烟花秀秀起来",
+        "summary": "- 贵州村超来了 90027285 五一假期，村超狂欢预定！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-crowd.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2026-04-21T10:32:42+08:00",
+        "body": "- 贵州村超来了 90027285 五一假期，村超狂欢预定！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202604/t20260421_90027285.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202601-t20260113-89291863-html",
+        "type": "article",
+        "title": "本周赛事 （2026年1月17日——1月18日）",
+        "summary": "本周赛事 （2026年1月17日——1月18日）",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-action.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2026-01-17T09:00:00+08:00",
+        "body": "本周赛事 （2026年1月17日——1月18日）\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202601/t20260113_89291863.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202601-t20260116-89303885-html",
+        "type": "article",
+        "title": "2026贵州“村超”预选赛赛程",
+        "summary": "2026贵州“村超”预选赛赛程",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2026-01-16T09:57:34+08:00",
+        "body": "2026贵州“村超”预选赛赛程\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202601/t20260116_89303885.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202601-t20260109-89284961-html",
+        "type": "article",
+        "title": "老乡们看过来！2026年1月9日贵州村超赛事活动流程表，请收藏！",
+        "summary": "- 贵州村超来了 89284961 老乡们看过来！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-crowd.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2026-01-09T09:00:00+08:00",
+        "body": "- 贵州村超来了 89284961 老乡们看过来！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202601/t20260109_89284961.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202512-t20251229-89095994-html",
+        "type": "article",
+        "title": "速存！元旦村超赛程更新！3 天烟花盛宴 + 热血赛事 + 民族展演，邀你跨年狂欢～",
+        "summary": "- 贵州村超来了 89095994 速存！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-12-29T09:17:36+08:00",
+        "body": "- 贵州村超来了 89095994 速存！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202512/t20251229_89095994.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202512-t20251217-89060839-html",
+        "type": "article",
+        "title": "【村超赛程】12月15日-12月21日村超赛程出炉！",
+        "summary": "- 贵州村超来了 89060839 【村超赛程】12月15日-12月21日村超赛程出炉！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-action.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-12-17T09:21:33+08:00",
+        "body": "- 贵州村超来了 89060839 【村超赛程】12月15日-12月21日村超赛程出炉！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202512/t20251217_89060839.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202512-t20251208-89025993-html",
+        "type": "article",
+        "title": "【村超赛程】12月8日-12月14日村超赛程出炉！",
+        "summary": "- 贵州村超来了 89025993 【村超赛程】12月8日-12月14日村超赛程出炉！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-crowd.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-12-08T15:27:15+08:00",
+        "body": "- 贵州村超来了 89025993 【村超赛程】12月8日-12月14日村超赛程出炉！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202512/t20251208_89025993.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202512-t20251203-89009271-html",
+        "type": "article",
+        "title": "热血不打烊，速存不迷路！12月1日至7日村超新赛程解锁，县队集结训练备战，交流赛精彩不停",
+        "summary": "- 贵州村超来了 89009271 热血不打烊，速存不迷路！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-12-03T09:18:56+08:00",
+        "body": "- 贵州村超来了 89009271 热血不打烊，速存不迷路！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202512/t20251203_89009271.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202511-t20251126-88981719-html",
+        "type": "article",
+        "title": "11月28日-11月30日村超赛程出炉！",
+        "summary": "- 贵州村超来了 88981719 11月28日-11月30日村超赛程出炉！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-action.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-11-26T10:15:52+08:00",
+        "body": "- 贵州村超来了 88981719 11月28日-11月30日村超赛程出炉！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202511/t20251126_88981719.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202511-t20251121-88964191-html",
+        "type": "article",
+        "title": "“村超”赛程新鲜发布！11月中下旬，民间赛事不停，每一场都值得期待",
+        "summary": "- 贵州村超来了 88964191 “村超”赛程新鲜发布！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-crowd.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-11-21T09:48:31+08:00",
+        "body": "- 贵州村超来了 88964191 “村超”赛程新鲜发布！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202511/t20251121_88964191.html"
+      },
+      {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202511-t20251105-88915119-html",
+        "type": "article",
+        "title": "11月3日—11月9日村超赛程出炉！",
+        "summary": "- 贵州村超来了 88915119 11月3日—11月9日村超赛程出炉！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-11-05T10:13:34+08:00",
+        "body": "- 贵州村超来了 88915119 11月3日—11月9日村超赛程出炉！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202511/t20251105_88915119.html"
+      },
+      {
+        "id": "article-weekend",
+        "type": "article",
+        "title": "榕江赛区周末关键战：20强席位进入最后争夺",
+        "summary": "本轮比赛将决定多个小组的出线形势，现场预约入口已同步开放。",
+        "source": "村超官方",
+        "leagueId": "gzcunchao",
+        "image": "/assets/football-action.jpg",
+        "likes": 238,
+        "comments": 64,
+        "favorites": 31,
+        "publishedAt": "2026-06-13T10:00:00+08:00",
+        "body": "本轮比赛将决定多个小组的出线形势。车江二村、忠诚队、寨蒿队都将在周末迎来直接对话，现场预约入口已同步开放。"
+      },
+      {
+        "id": "article-derby",
+        "type": "news",
+        "title": "苏超城市德比升温：南京队主场预约通道已开放",
+        "summary": "城市德比带动本地看球和短途出行热度。",
+        "source": "苏超观察",
+        "leagueId": "js-super",
+        "image": "/assets/football-crowd.jpg",
+        "likes": 186,
+        "comments": 42,
+        "favorites": 20,
+        "publishedAt": "2026-06-13T09:20:00+08:00"
+      },
+      {
+        "id": "travel-sanbao",
+        "type": "travel",
+        "title": "跟着比赛去旅行：三宝侗寨一日路线更新",
+        "summary": "赛前吃酸汤鱼，赛后看侗族大歌，适合第一次到榕江看球的游客。",
+        "source": "文旅攻略",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 92,
+        "comments": 18,
+        "favorites": 55,
+        "publishedAt": "2026-06-12T18:00:00+08:00"
+      }
+    ],
+    "posts": [
+      {
+        "id": "post-wing",
+        "title": "车江二村这场边路推进是不是本轮最佳？",
+        "author": "榕江看球人",
+        "body": "现场看下来，他们两个边前卫的回撤和前插很默契，尤其下半场连续三次从右路制造威胁。大家觉得这套踢法能撑到淘汰赛吗？",
+        "leagueId": "gzcunchao",
+        "teamId": "team-chejiang",
+        "likes": 328,
+        "comments": 86,
+        "favorites": 42,
+        "createdAt": "2小时前"
+      },
+      {
+        "id": "post-parking",
+        "title": "第一次来榕江看球，停车和入场有哪些坑？",
+        "author": "小吴",
+        "body": "准备周末带家人去，有没有更方便的入场路线？",
+        "leagueId": "gzcunchao",
+        "likes": 124,
+        "comments": 39,
+        "favorites": 61,
+        "createdAt": "今天"
+      },
+      {
+        "id": "post-compare",
+        "title": "苏超城市德比的气氛，和村超有什么不同？",
+        "author": "城市球迷",
+        "body": "两种赛事气质都很鲜明，大家聊聊差异。",
+        "leagueId": "js-super",
+        "likes": 210,
+        "comments": 74,
+        "favorites": 28,
+        "createdAt": "昨天"
+      }
+    ],
+    "comments": [
+      {
+        "id": "comment-1",
+        "author": "阿亮",
+        "body": "这类赛前信息很有用，最好能直接关联预约入口。",
+        "likes": 48,
+        "replies": 9,
+        "createdAt": "2小时前"
+      },
+      {
+        "id": "comment-2",
+        "author": "球场边",
+        "body": "积分形势图可以再做成可滑动卡片。",
+        "likes": 31,
+        "replies": 5,
+        "createdAt": "1小时前"
+      },
+      {
+        "id": "comment-3",
+        "author": "榕江看球人",
+        "body": "这场节奏很快，寨蒿队边路压得很靠前。",
+        "likes": 45,
+        "replies": 12,
+        "createdAt": "刚刚"
+      }
+    ],
+    "travelGuides": [
+      {
+        "id": "guide-sanbao",
+        "title": "三宝侗寨路线：赛前吃酸汤鱼，赛后看侗族大歌",
+        "leagueId": "gzcunchao",
+        "region": "榕江",
+        "image": "/assets/village-scene.jpg",
+        "summary": "支持按联赛、球队、附近、热门村寨搜索，不把几百个村寨平铺在顶部。",
+        "tags": [
+          "附近",
+          "热门村寨",
+          "球队筛选"
+        ]
+      }
+    ],
+    "bookingEvents": [
+      {
+        "id": "booking-1",
+        "matchId": "match-next-1",
+        "title": "贵州村超 · 忠诚队 vs 平永队",
+        "venue": "榕江一号场",
+        "startsAt": "2026-06-15T19:30:00+08:00",
+        "availability": "available",
+        "provider": "official"
+      }
+    ],
+    "activities": [
+      {
+        "id": "act-1",
+        "type": "comment",
+        "title": "评论/回帖：可找回参与过的资讯与帖子",
+        "targetType": "post",
+        "createdAt": "今天"
+      },
+      {
+        "id": "act-2",
+        "type": "like",
+        "title": "点赞记录：包括资讯、帖子、评论",
+        "targetType": "article",
+        "createdAt": "昨天"
+      },
+      {
+        "id": "act-3",
+        "type": "favorite",
+        "title": "收藏内容：攻略、比赛、深度帖",
+        "targetType": "travel",
+        "createdAt": "本周"
+      },
+      {
+        "id": "act-4",
+        "type": "history",
+        "title": "浏览历史：最近看过的球队和比赛",
+        "targetType": "team",
+        "createdAt": "本周"
+      }
+    ]
+  },
+  "source": "external",
+  "updatedAt": "2026-06-14T07:50:02.274Z",
+  "meta": {
+    "sourceCount": 3,
+    "collectedContentCount": 12,
+    "manualMatchCount": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "updatedAt": "2026-06-14T00:00:00+08:00",
+  "contentSources": [
+    {
+      "id": "guizhou-cunchao-schedule",
+      "kind": "schedule",
+      "leagueId": "gzcunchao",
+      "sourceName": "贵州省人民政府·贵州村超来了",
+      "url": "https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/index.html",
+      "includeKeywords": ["村超", "赛程", "赛事", "冠军赛", "流程"],
+      "excludeTitles": ["联赛赛程"],
+      "limit": 12
+    },
+    {
+      "id": "gzcunchao-official-schedule",
+      "kind": "schedule",
+      "leagueId": "gzcunchao",
+      "sourceName": "村超官网",
+      "url": "https://www.gzcunchao.com/ssqk",
+      "includeKeywords": ["村超", "赛程", "赛事"],
+      "excludeTitles": ["赛事情况"],
+      "limit": 8
+    },
+    {
+      "id": "gzcunchao-official-home",
+      "kind": "news",
+      "leagueId": "gzcunchao",
+      "sourceName": "村超官网",
+      "url": "https://www.gzcunchao.com/",
+      "includeKeywords": ["村超", "榕江", "赛事", "足球"],
+      "excludeTitles": ["村超官网"],
+      "limit": 8
+    }
+  ]
+}
