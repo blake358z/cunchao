@@ -43,7 +43,6 @@ jobs:
           file_pattern: apps/web/public/data/bootstrap.json
 
       - name: Deploy Vercel production
-        run: npx vercel --prod --yes --no-wait --force --token="${{ secrets.VERCEL_TOKEN }}" || true
+        run: npx vercel deploy apps/web/dist --prod --yes --no-wait --force --project cunchao-static --token="${{ secrets.VERCEL_TOKEN }}"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

@@ -333,6 +333,20 @@
         "body": "- 贵州村超来了 88964191 “村超”赛程新鲜发布！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202511/t20251121_88964191.html"
       },
       {
+        "id": "guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202511-t20251105-88915119-html",
+        "type": "article",
+        "title": "11月3日—11月9日村超赛程出炉！",
+        "summary": "- 贵州村超来了 88915119 11月3日—11月9日村超赛程出炉！",
+        "source": "贵州省人民政府·贵州村超来了",
+        "leagueId": "gzcunchao",
+        "image": "/assets/village-scene.jpg",
+        "likes": 0,
+        "comments": 0,
+        "favorites": 0,
+        "publishedAt": "2025-11-05T10:13:34+08:00",
+        "body": "- 贵州村超来了 88915119 11月3日—11月9日村超赛程出炉！\n\n来源：贵州省人民政府·贵州村超来了\n原文：https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/202511/t20251105_88915119.html"
+      },
+      {
         "id": "article-weekend",
         "type": "article",
         "title": "榕江赛区周末关键战：20强席位进入最后争夺",
@@ -493,10 +507,10 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-14T07:52:28.606Z",
+  "updatedAt": "2026-06-14T08:17:33.492Z",
   "meta": {
     "sourceCount": 3,
-    "collectedContentCount": 11,
+    "collectedContentCount": 12,
     "manualMatchCount": 0
   }
 }
