@@ -12,7 +12,7 @@
     "dev:api": "npm run dev --workspace @cunchao/api",
     "dev:all": "npm run dev:api & npm run dev",
     "build": "npm run build --workspaces",
-    "android:sync": "npm run build --workspace @cunchao/web && cap sync android",
+    "android:sync": "npm run build --workspace @cunchao/shared && npm run build --workspace @cunchao/web && cap sync android",
     "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug",
     "typecheck": "npm run typecheck --workspaces",
     "lint": "npm run lint --workspaces"
