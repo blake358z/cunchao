@@ -28,6 +28,7 @@ const {
 
 const sources = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
 const manualMatches = JSON.parse(await fs.readFile(manualMatchesPath, "utf8"));
+const minimumCollectedItems = Number(process.env.MIN_COLLECTED_ITEMS ?? 3);
 
 function stripHtml(html) {
   return html
@@ -178,6 +179,20 @@ function updateLeagueHints(currentLeagues, scheduleItems) {
 
 const collectedGroups = await Promise.all(sources.contentSources.map(collectSource));
 const collectedContents = collectedGroups.flat().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+if (collectedContents.length < minimumCollectedItems) {
+  try {
+    const existing = JSON.parse(await fs.readFile(outputPath, "utf8"));
+    const existingCount = existing.meta?.collectedContentCount ?? existing.data?.contents?.length ?? 0;
+    if (existingCount >= minimumCollectedItems) {
+      console.warn(
+        `Collected only ${collectedContents.length} items; keeping existing ${outputPath} with ${existingCount} collected items.`
+      );
+      process.exit(0);
+    }
+  } catch {
+    console.warn(`Collected only ${collectedContents.length} items and no existing output was found; writing fallback payload.`);
+  }
+}
 const scheduleItems = collectedContents.filter((item) => item.type === "article");
 const mergedContents = mergeById(collectedContents, fallbackContents).slice(0, 60);
 const mergedMatches = mergeById(manualMatches.matches ?? [], fallbackMatches);
