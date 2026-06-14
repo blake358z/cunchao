@@ -5,10 +5,6 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/bootstrap",
-      "destination": "/api/bootstrap"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
