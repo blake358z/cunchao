@@ -64,6 +64,7 @@ GitHub Actions 文件：
 3. 抓取公开来源并生成 `apps/web/public/data/bootstrap.json`。
 4. 构建 Web，验证数据没有破坏前端。
 5. 如果数据变化，自动提交 `Update public data`。
+6. 拉取 Vercel 项目设置，构建生产产物并部署到 Vercel Production。
 
 ## 后续接入官方 API 的位置
 
@@ -94,3 +95,22 @@ Team[]
 - 官方网页结构化表格；
 - 人工审核后再发布。
 
+## Vercel 自动发布
+
+GitHub 仓库已配置以下 Actions Secrets：
+
+```bash
+VERCEL_TOKEN
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+```
+
+每日数据更新任务成功后，会执行：
+
+```bash
+npx vercel pull --yes --environment=production
+npx vercel build --prod
+npx vercel deploy --prebuilt --prod
+```
+
+这样用户打开 Vercel 地址时，可以看到当天更新后的 `bootstrap.json`。旧新闻会继续保留在生成文件里，新的新闻排在前面。
