@@ -42,20 +42,8 @@ jobs:
           commit_message: "Update public data"
           file_pattern: apps/web/public/data/bootstrap.json
 
-      - name: Pull Vercel project settings
-        run: npx vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Build Vercel output
-        run: npx vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
       - name: Deploy Vercel production
-        run: npx vercel deploy --prebuilt --prod --yes --no-wait --token="${{ secrets.VERCEL_TOKEN }}"
+        run: npx vercel --prod --yes --no-wait --force --token="${{ secrets.VERCEL_TOKEN }}"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

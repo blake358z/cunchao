@@ -108,9 +108,7 @@ VERCEL_PROJECT_ID
 每日数据更新任务成功后，会执行：
 
 ```bash
-npx vercel pull --yes --environment=production
-npx vercel build --prod
-npx vercel deploy --prebuilt --prod --yes --no-wait
+npx vercel --prod --yes --no-wait --force
 ```
 
-这样每日任务会触发一次 Vercel 生产部署。用户打开 Vercel 地址时，可以看到当天更新后的 `bootstrap.json`。旧新闻会继续保留在生成文件里，新的新闻排在前面。
+这样每日任务会触发一次 Vercel 生产部署，由 Vercel 云端按仓库源码构建。用户打开 Vercel 地址时，可以看到当天更新后的 `bootstrap.json`。旧新闻会继续保留在生成文件里，新的新闻排在前面。
