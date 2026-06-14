@@ -9,7 +9,7 @@ import {
   standings,
   teams,
   travelGuides
-} from "@cunchao/shared";
+} from "../packages/shared/dist/index.js";
 
 export default function handler(_request: unknown, response: any) {
   response.status(200).json({
@@ -29,4 +29,3 @@ export default function handler(_request: unknown, response: any) {
     updatedAt: new Date().toISOString()
   });
 }
-
