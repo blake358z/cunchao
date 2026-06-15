@@ -67,6 +67,8 @@ export interface ContentItem {
   favorites: number;
   publishedAt: string;
   body?: string;
+  originalUrl?: string;
+  imageCredit?: string;
 }
 
 export interface Comment {

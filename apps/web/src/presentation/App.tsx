@@ -325,12 +325,24 @@ function ProfilePage({ activities, teams, onOpenTeam }: { activities: Array<{ id
 }
 
 function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onBack: () => void; onAction: (label: string) => void }) {
+  const bodyBlocks = (article.body ?? article.summary).split(/\n{2,}/).filter(Boolean);
+  const sourceBlocks = bodyBlocks.filter((block) => block.startsWith("来源：") || block.startsWith("原文："));
+  const contentBlocks = bodyBlocks.filter((block) => !sourceBlocks.includes(block));
+  const originalUrl = article.originalUrl ?? sourceBlocks.find((block) => block.startsWith("原文："))?.replace("原文：", "");
   return (
     <section className="page-content detail">
       <img className="detail-image" src={article.image} alt="" />
       <h1 className="detail-title">{article.title}</h1>
       <p className="meta">{article.source} · 赞 {article.likes} · 评 {article.comments} · 藏 {article.favorites}</p>
-      <p className="body-copy">{article.body ?? article.summary}</p>
+      {article.imageCredit && <p className="image-credit">图片来源：{article.imageCredit}</p>}
+      <div className="body-copy">
+        {contentBlocks.map((block) => <p key={block}>{block}</p>)}
+      </div>
+      <div className="source-box">
+        <strong>资讯来源</strong>
+        <span>{article.source}</span>
+        {originalUrl && <a href={originalUrl} target="_blank" rel="noreferrer">查看原文</a>}
+      </div>
       <div className="action-line prominent"><button onClick={() => onAction("点赞")}>点赞</button><button onClick={() => onAction("评论")}>评论</button><button onClick={() => onAction("收藏")}>收藏</button></div>
       <SectionTitle title="热门评论" />
       <CommentList comments={comments} onAction={onAction} />
@@ -378,4 +390,3 @@ function CommentList({ comments, onAction }: { comments: Array<{ id: string; aut
 function SectionTitle({ title }: { title: string }) {
   return <h2 className="section-title">{title}</h2>;
 }
-

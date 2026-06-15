@@ -41,7 +41,7 @@ h1, h2, h3, p { margin: 0; }
 .article-row > button { width: 100%; display: grid; grid-template-columns: 1fr 80px; gap: 12px; padding: 12px; text-align: left; }
 .article-row img { width: 80px; height: 60px; border-radius: 6px; object-fit: cover; }
 .article-row h3, .post-card h3 { font-size: 15px; line-height: 20px; }
-.article-row p, .post-card p, .post-card span, .team-head p, .body-copy, .events p { color: #6f7580; font-size: 12px; line-height: 16px; margin-top: 8px; }
+.article-row p, .post-card p, .post-card span, .team-head p, .events p { color: #6f7580; font-size: 12px; line-height: 16px; margin-top: 8px; }
 .action-line { display: flex; gap: 18px; padding: 0 12px 12px; color: #e6322a; font-size: 12px; font-weight: 700; }
 .prominent { padding: 12px 0 0; }
 .league-carousel { display: flex; gap: 12px; overflow-x: auto; padding: 12px 0 18px; scrollbar-width: none; }
@@ -91,6 +91,11 @@ h1, h2, h3, p { margin: 0; }
 .activity strong { color: #e6322a; font-size: 12px; }
 .detail-title { margin: 14px 0 8px; font-size: 22px; line-height: 28px; }
 .body-copy, .post-main div { margin-top: 16px; color: #30343b; font-size: 14px; line-height: 22px; }
+.body-copy p { margin: 0 0 12px; }
+.image-credit { margin-top: 6px; color: #99a0ad; font-size: 11px; line-height: 16px; }
+.source-box { display: grid; gap: 6px; margin-top: 16px; padding: 12px; border-radius: 8px; background: #fff; border: 1px solid #e7e9ee; font-size: 12px; color: #6f7580; }
+.source-box strong { color: #30343b; font-size: 13px; }
+.source-box a { color: #e6322a; font-weight: 800; text-decoration: none; }
 .post-main { padding: 16px 14px; }
 .post-main h1 { font-size: 19px; line-height: 25px; }
 .post-main strong { display: block; margin-top: 14px; color: #e6322a; font-size: 12px; }
