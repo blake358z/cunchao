@@ -75,6 +75,9 @@ export interface ContentItem {
 
 export interface Comment {
   id: string;
+  postId?: string;
+  parentId?: string;
+  replyTo?: string;
   author: string;
   body: string;
   likes: number;

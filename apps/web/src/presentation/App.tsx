@@ -1,6 +1,6 @@
 import { CalendarDays, Heart, Home, MapPin, MessageCircle, Search, Star, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { ContentItem, Match, Post, Team } from "@cunchao/shared";
+import type { Comment, ContentItem, Match, Post, Team } from "@cunchao/shared";
 import { useBootstrap } from "../application/useBootstrap";
 import type { DetailView, TabKey } from "../domain/types";
 
@@ -61,7 +61,8 @@ export function App() {
     }
     if (detail?.type === "post") {
       const post = data.posts.find((item) => item.id === detail.id) ?? data.posts[0];
-      return <PostDetail post={post} comments={data.comments} onBack={() => setDetail(null)} onAction={interact} />;
+      const postComments = data.comments.filter((comment) => comment.postId === post.id);
+      return <PostDetail post={post} comments={postComments.length ? postComments : data.comments.slice(0, 50)} onBack={() => setDetail(null)} onAction={interact} />;
     }
 
     if (tab === "home") {
@@ -233,7 +234,7 @@ function MatchCard({ match, onOpen }: { match: Match; onOpen: () => void }) {
   );
 }
 
-function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onBack: () => void; onAction: (label: string) => void }) {
+function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
   return (
     <section className="page-content detail">
       <div className="scoreboard">
@@ -264,7 +265,7 @@ function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comm
   );
 }
 
-function TeamDetail({ team, teamTab, setTeamTab, contents, matches, comments, onBack, onOpenMatch, onAction }: { team: Team; teamTab: string; setTeamTab: (tab: string) => void; contents: ContentItem[]; matches: Match[]; comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onBack: () => void; onOpenMatch: (id: string) => void; onAction: (label: string) => void }) {
+function TeamDetail({ team, teamTab, setTeamTab, contents, matches, comments, onBack, onOpenMatch, onAction }: { team: Team; teamTab: string; setTeamTab: (tab: string) => void; contents: ContentItem[]; matches: Match[]; comments: Comment[]; onBack: () => void; onOpenMatch: (id: string) => void; onAction: (label: string) => void }) {
   const tabs = ["资讯", "赛程", "球员", "讨论", "球队信息"];
   return (
     <section className="page-content detail">
@@ -296,7 +297,8 @@ function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (id: 
       {posts.map((post) => (
         <button className="list-card post-card" key={post.id} onClick={() => onOpenPost(post.id)}>
           <h3>{post.title}</h3>
-          <p>{post.author} · {post.createdAt}</p>
+          <p>{post.body}</p>
+          <small>{post.author} · {post.createdAt}</small>
           <span>赞 {post.likes} · 评 {post.comments} · 藏 {post.favorites}</span>
         </button>
       ))}
@@ -340,7 +342,7 @@ function ProfilePage({ activities, teams, onOpenTeam }: { activities: Array<{ id
   );
 }
 
-function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onBack: () => void; onAction: (label: string) => void }) {
+function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
   const bodyBlocks = (article.body ?? article.summary).split(/\n{2,}/).filter(Boolean);
   const sourceBlocks = bodyBlocks.filter((block) => block.startsWith("来源：") || block.startsWith("原文："));
   const contentBlocks = bodyBlocks.filter((block) => !sourceBlocks.includes(block));
@@ -368,7 +370,7 @@ function ArticleDetail({ article, comments, onBack, onAction }: { article: Conte
   );
 }
 
-function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onBack: () => void; onAction: (label: string) => void }) {
+function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
   return (
     <section className="page-content detail">
       <article className="list-card post-main">
@@ -386,14 +388,14 @@ function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments
   );
 }
 
-function CommentList({ comments, onAction }: { comments: Array<{ id: string; author: string; body: string; likes: number; replies: number }>; onAction: (label: string) => void }) {
+function CommentList({ comments, onAction }: { comments: Comment[]; onAction: (label: string) => void }) {
   return (
     <div className="comments">
       {comments.map((comment) => (
-        <div className="comment" key={comment.id}>
+        <div className={`comment ${comment.parentId ? "reply-comment" : ""}`} key={comment.id}>
           <div className="mini-avatar" />
           <div>
-            <strong>{comment.author}</strong>
+            <strong>{comment.author}{comment.replyTo ? <span> 回复 {comment.replyTo}</span> : null}</strong>
             <p>{comment.body}</p>
             <button onClick={() => onAction("评论点赞")}>赞 {comment.likes}</button><button onClick={() => onAction("回复")}>回复 {comment.replies}</button>
           </div>

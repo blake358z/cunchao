@@ -66,8 +66,10 @@ h1, h2, h3, p { margin: 0; }
 .comment { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 8px; }
 .mini-avatar, .avatar { width: 28px; height: 28px; border-radius: 50%; background: #edf0f5; }
 .comment strong { font-size: 12px; }
+.comment strong span { color: #8a909b; font-weight: 600; }
 .comment p { margin: 5px 0 8px; font-size: 13px; line-height: 18px; }
 .comment button { margin-right: 14px; color: #6f7580; font-size: 11px; font-weight: 700; }
+.reply-comment { margin-left: 28px; border-left: 2px solid #eef0f4; padding-left: 8px; }
 .scroll-hint { color: #99a0ad; text-align: center; font-size: 11px; padding: 12px 0; }
 .team-head, .profile-card { display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; border: 1px solid #e7e9ee; padding: 16px 14px; }
 .team-head h2, .profile-card h2 { font-size: 18px; }
@@ -75,6 +77,7 @@ h1, h2, h3, p { margin: 0; }
 .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .player-grid .list-card { padding: 14px; font-size: 13px; font-weight: 700; }
 .post-card { display: block; text-align: left; padding: 16px 14px; margin-bottom: 10px; }
+.post-card small { display: block; margin-top: 8px; color: #8a909b; font-size: 11px; line-height: 15px; }
 .travel-card { background: #fff; border-radius: 8px; border: 1px solid #e7e9ee; padding-bottom: 14px; overflow: hidden; }
 .travel-card img, .detail-image { width: 100%; height: 150px; object-fit: cover; display: block; border-radius: 8px; }
 .travel-card h3, .travel-card p { padding: 12px 14px 0; }
