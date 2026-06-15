@@ -531,13 +531,13 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-15T04:12:50.635Z",
+  "updatedAt": "2026-06-15T04:14:22.113Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-06-15T04:12:50.636Z",
-    "lastAttemptCollectedContentCount": 12,
-    "updateStatus": "updated"
+    "lastCheckedAt": "2026-06-15T04:14:22.114Z",
+    "lastAttemptCollectedContentCount": 0,
+    "updateStatus": "retained_existing_low_collection"
   }
 }
