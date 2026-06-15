@@ -10,6 +10,7 @@ const outputPath = path.join(rootDir, "apps/web/public/data/bootstrap.json");
 const imageOutputDir = path.join(rootDir, "apps/web/public/data/images");
 const publicImageBasePath = "/data/images";
 const maxBodyChars = Number(process.env.MAX_ARTICLE_BODY_CHARS ?? 1200);
+const matchWindowDays = Number(process.env.MATCH_WINDOW_DAYS ?? 14);
 const imageFallbacks = [
   "/assets/football-action.jpg",
   "/assets/football-crowd.jpg",
@@ -209,6 +210,15 @@ function itemId(sourceId, url) {
   return `${sourceId}-${slug}`;
 }
 
+function stableId(prefix, parts) {
+  return `${prefix}-${parts
+    .join("-")
+    .replace(/^https?:\/\//, "")
+    .replace(/[^a-zA-Z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(-96)}`;
+}
+
 async function fetchText(url) {
   const response = await fetch(url, {
     headers: {
@@ -280,13 +290,129 @@ function mergeById(primary, fallback) {
   });
 }
 
-function updateLeagueHints(currentLeagues, scheduleItems) {
+function startOfChinaToday() {
+  const formatter = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+  const parts = Object.fromEntries(formatter.formatToParts(new Date()).map((part) => [part.type, part.value]));
+  return new Date(`${parts.year}-${parts.month}-${parts.day}T00:00:00+08:00`);
+}
+
+function isWithinFutureMatchWindow(match, start = startOfChinaToday()) {
+  const startsAt = new Date(match.startsAt);
+  const end = new Date(start.getTime() + matchWindowDays * 24 * 60 * 60 * 1000);
+  return match.status === "scheduled" && startsAt >= start && startsAt < end;
+}
+
+function normalizeTeamId(name) {
+  return `team-${name
+    .replace(/代表队$/, "")
+    .replace(/[队\s]/g, "")
+    .replace(/[^a-zA-Z0-9\u4e00-\u9fa5]+/g, "-")
+    .slice(0, 24)}`;
+}
+
+function parseDateParts(text) {
+  const dates = [];
+  const currentYear = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Shanghai", year: "numeric" }).format(new Date());
+  const fullDatePattern = /(20\d{2})[年./-]\s*(\d{1,2})[月./-]\s*(\d{1,2})日?/g;
+  for (const match of text.matchAll(fullDatePattern)) {
+    dates.push({ year: match[1], month: match[2].padStart(2, "0"), day: match[3].padStart(2, "0") });
+  }
+  const shortDatePattern = /(?<!20\d{2}[年./-]\s*)(\d{1,2})月\s*(\d{1,2})日/g;
+  for (const match of text.matchAll(shortDatePattern)) {
+    dates.push({ year: currentYear, month: match[1].padStart(2, "0"), day: match[2].padStart(2, "0") });
+  }
+  return dates.filter((date, index, array) => array.findIndex((item) => `${item.year}-${item.month}-${item.day}` === `${date.year}-${date.month}-${date.day}`) === index);
+}
+
+function extractVenue(text) {
+  const venueMatch = text.match(/(?:地点|场地|球场|主场|venue)[：:\s]*(.{2,30}?(?:球场|体育场|中心|一号场|二号场|三号场|主场|场))/i);
+  if (venueMatch?.[1]) return venueMatch[1].replace(/[，。,；;].*$/, "").trim();
+  const inlineVenue = text.match(/([\u4e00-\u9fa5A-Za-z0-9·]{2,24}(?:球场|体育场|中心|一号场|二号场|三号场))/);
+  return inlineVenue?.[1] ?? "待公布";
+}
+
+function extractMatchesFromContent(item) {
+  const text = `${item.title}\n${item.summary}\n${item.body ?? ""}`;
+  const dates = parseDateParts(text);
+  const matches = [];
+  const pairPattern = /([\u4e00-\u9fa5A-Za-z0-9·]{2,18}(?:队|代表队)?)\s*(?:vs|VS|v|V|对阵|迎战|挑战|—|-|：|:)\s*([\u4e00-\u9fa5A-Za-z0-9·]{2,18}(?:队|代表队)?)/g;
+  const pairs = [...text.matchAll(pairPattern)];
+  if (!dates.length || !pairs.length) return matches;
+
+  const times = [...text.matchAll(/(\d{1,2})[:：](\d{2})/g)].map((match) => ({
+    hour: match[1].padStart(2, "0"),
+    minute: match[2]
+  }));
+
+  pairs.slice(0, 12).forEach((pair, index) => {
+    const date = dates[Math.min(index, dates.length - 1)];
+    const time = times[index] ?? times[0] ?? { hour: "19", minute: "30" };
+    const homeTeam = pair[1].trim();
+    const awayTeam = pair[2].trim();
+    matches.push({
+      id: stableId("match-auto", [item.leagueId ?? "league", `${date.year}${date.month}${date.day}`, homeTeam, awayTeam]),
+      leagueId: item.leagueId ?? "gzcunchao",
+      homeTeamId: normalizeTeamId(homeTeam),
+      awayTeamId: normalizeTeamId(awayTeam),
+      homeTeam,
+      awayTeam,
+      venue: extractVenue(text),
+      startsAt: `${date.year}-${date.month}-${date.day}T${time.hour}:${time.minute}:00+08:00`,
+      status: "scheduled",
+      source: item.source,
+      originalUrl: item.originalUrl
+    });
+  });
+  return matches;
+}
+
+function normalizeScheduledMatch(match) {
+  const { score, minute, ...rest } = match;
+  if (match.status !== "scheduled") return match;
+  return rest;
+}
+
+function mergeMatches(primary, fallback) {
+  const seen = new Set();
+  return [...primary, ...fallback]
+    .map(normalizeScheduledMatch)
+    .filter((match) => isWithinFutureMatchWindow(match))
+    .sort((a, b) => new Date(a.startsAt) - new Date(b.startsAt))
+    .filter((match) => {
+      const key = `${match.leagueId}|${match.startsAt}|${match.homeTeam}|${match.awayTeam}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function formatMatchHint(match) {
+  const startsAt = new Date(match.startsAt);
+  const label = startsAt.toLocaleString("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+  return `${label} ${match.homeTeam} vs ${match.awayTeam}`;
+}
+
+function updateLeagueHints(currentLeagues, scheduleItems, futureMatches) {
   return currentLeagues.map((league) => {
+    const nextMatch = futureMatches.find((match) => match.leagueId === league.id);
     const latest = scheduleItems.find((item) => item.leagueId === league.id);
-    if (!latest) return league;
+    const nextHint = nextMatch ? formatMatchHint(nextMatch) : latest?.title;
     return {
       ...league,
-      nextHint: latest.title
+      liveHint: undefined,
+      nextHint: nextHint ?? "暂无未来两周赛程"
     };
   });
 }
@@ -319,12 +445,13 @@ if (collectedContents.length < minimumCollectedItems) {
   }
 }
 const scheduleItems = collectedContents.filter((item) => item.type === "article");
+const collectedMatches = scheduleItems.flatMap(extractMatchesFromContent);
 const mergedContents = mergeById(collectedContents, fallbackContents).slice(0, 60);
-const mergedMatches = mergeById(manualMatches.matches ?? [], fallbackMatches);
+const mergedMatches = mergeMatches([...(manualMatches.matches ?? []), ...collectedMatches], fallbackMatches);
 
 const payload = {
   data: {
-    leagues: updateLeagueHints(leagues, scheduleItems),
+    leagues: updateLeagueHints(leagues, scheduleItems, mergedMatches),
     matches: mergedMatches,
     teams,
     standings,
@@ -340,6 +467,9 @@ const payload = {
   meta: {
     sourceCount: sources.contentSources.length,
     collectedContentCount: collectedContents.length,
+    collectedMatchCount: collectedMatches.length,
+    matchCount: mergedMatches.length,
+    matchWindowDays,
     manualMatchCount: manualMatches.matches?.length ?? 0,
     lastCheckedAt: new Date().toISOString(),
     lastAttemptCollectedContentCount: collectedContents.length,

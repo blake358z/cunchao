@@ -40,6 +40,8 @@ export interface Match {
     away: number;
   };
   minute?: number;
+  source?: string;
+  originalUrl?: string;
 }
 
 export interface StandingRow {

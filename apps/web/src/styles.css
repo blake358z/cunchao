@@ -89,6 +89,9 @@ h1, h2, h3, p { margin: 0; }
 .activity { padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; }
 .activity span { font-size: 13px; color: #3d424c; }
 .activity strong { color: #e6322a; font-size: 12px; }
+.empty-card { padding: 16px 14px; color: #6f7580; }
+.empty-card strong { display: block; color: #30343b; font-size: 14px; }
+.empty-card p { margin-top: 8px; font-size: 12px; line-height: 17px; }
 .detail-title { margin: 14px 0 8px; font-size: 22px; line-height: 28px; }
 .body-copy, .post-main div { margin-top: 16px; color: #30343b; font-size: 14px; line-height: 22px; }
 .body-copy p { margin: 0 0 12px; }

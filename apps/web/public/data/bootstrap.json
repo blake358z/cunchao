@@ -9,8 +9,7 @@
         "region": "贵州榕江",
         "season": "2026",
         "description": "以村寨球队、民族文化展演和群众足球为核心的全国热门乡村足球赛事。",
-        "liveHint": "正在进行：车江二村 1-0 寨蒿",
-        "nextHint": "本周六，贵州村超冠军赛第四轮打响"
+        "nextHint": "6/15 19:30 忠诚队 vs 平永队"
       },
       {
         "id": "js-super",
@@ -20,7 +19,7 @@
         "region": "江苏",
         "season": "2026",
         "description": "以城市队、主客场和城市德比为主要叙事的群众足球赛事。",
-        "nextHint": "今天 20:00 南京 vs 苏州"
+        "nextHint": "暂无未来两周赛程"
       },
       {
         "id": "qh-youth",
@@ -30,7 +29,7 @@
         "region": "青海",
         "season": "2026",
         "description": "高原地区城市与州队共同参与的区域足球赛事。",
-        "nextHint": "周日 16:00 西宁 vs 海东"
+        "nextHint": "暂无未来两周赛程"
       },
       {
         "id": "jx-super",
@@ -40,26 +39,10 @@
         "region": "江西",
         "season": "2026",
         "description": "连接城市足球、县域文化和地方文旅的新兴赛事。",
-        "nextHint": "6月18日 南昌 vs 九江"
+        "nextHint": "暂无未来两周赛程"
       }
     ],
     "matches": [
-      {
-        "id": "match-live-1",
-        "leagueId": "gzcunchao",
-        "homeTeamId": "team-chejiang",
-        "awayTeamId": "team-zhaigao",
-        "homeTeam": "车江二村",
-        "awayTeam": "寨蒿队",
-        "venue": "榕江一号场",
-        "startsAt": "2026-06-13T19:30:00+08:00",
-        "status": "live",
-        "score": {
-          "home": 2,
-          "away": 1
-        },
-        "minute": 68
-      },
       {
         "id": "match-next-1",
         "leagueId": "gzcunchao",
@@ -80,17 +63,6 @@
         "awayTeam": "乐里队",
         "venue": "榕江一号场",
         "startsAt": "2026-06-16T16:00:00+08:00",
-        "status": "scheduled"
-      },
-      {
-        "id": "match-js-1",
-        "leagueId": "js-super",
-        "homeTeamId": "team-nanjing",
-        "awayTeamId": "team-suzhou",
-        "homeTeam": "南京队",
-        "awayTeam": "苏州队",
-        "venue": "南京奥体中心",
-        "startsAt": "2026-06-13T20:00:00+08:00",
         "status": "scheduled"
       }
     ],
@@ -345,8 +317,7 @@
         "summary": "- 贵州村超来了 88964191 “村超”赛程新鲜发布！",
         "source": "贵州省人民政府·贵州村超来了",
         "leagueId": "gzcunchao",
-        "image": "/data/images/guizhou-cunchao-schedule-www-guizhou-gov-cn-ztzl-gzcfa-lssc-202511-t20251121-88964191-html-0.png",
-        "imageCredit": "贵州省人民政府·贵州村超来了",
+        "image": "/assets/football-crowd.jpg",
         "likes": 0,
         "comments": 0,
         "favorites": 0,
@@ -531,13 +502,16 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-15T04:14:22.113Z",
+  "updatedAt": "2026-06-15T04:24:27.590Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
+    "collectedMatchCount": 30,
+    "matchCount": 2,
+    "matchWindowDays": 14,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-06-15T04:14:22.114Z",
-    "lastAttemptCollectedContentCount": 0,
-    "updateStatus": "retained_existing_low_collection"
+    "lastCheckedAt": "2026-06-15T04:24:27.591Z",
+    "lastAttemptCollectedContentCount": 12,
+    "updateStatus": "updated"
   }
 }

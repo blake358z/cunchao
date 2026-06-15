@@ -201,8 +201,13 @@ function EventsPage({ leagues, selectedLeagueId, setSelectedLeagueId, matches, s
           </button>
         ))}
       </div>
-      <SectionTitle title="当前联赛赛程" />
-      {matches.map((match) => <MatchCard key={match.id} match={match} onOpen={() => onOpenMatch(match.id)} />)}
+      <SectionTitle title="未来两周赛程" />
+      {matches.length ? matches.map((match) => <MatchCard key={match.id} match={match} onOpen={() => onOpenMatch(match.id)} />) : (
+        <div className="list-card empty-card">
+          <strong>暂无未来两周赛程</strong>
+          <p>每日更新任务会继续抓取官方赛程；拿到结构化数据后会自动补入这里。</p>
+        </div>
+      )}
       <SectionTitle title="积分榜速览" />
       <div className="list-card standings">
         {standings.map((row) => (
@@ -217,12 +222,13 @@ function EventsPage({ leagues, selectedLeagueId, setSelectedLeagueId, matches, s
 
 function MatchCard({ match, onOpen }: { match: Match; onOpen: () => void }) {
   const score = match.score ? `${match.score.home} - ${match.score.away}` : new Date(match.startsAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+  const date = new Date(match.startsAt).toLocaleDateString("zh-CN", { month: "numeric", day: "numeric", weekday: "short" });
   return (
     <button className="list-card match-card" onClick={onOpen}>
       <span>{match.homeTeam}</span>
       <strong className={match.status === "live" ? "live" : ""}>{score}</strong>
       <span>{match.awayTeam}</span>
-      <small>{match.status === "live" ? `进行中 ${match.minute}分` : match.venue}</small>
+      <small>{match.status === "live" ? `进行中 ${match.minute}分` : `${date} · ${match.venue}`}</small>
     </button>
   );
 }
@@ -232,13 +238,23 @@ function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comm
     <section className="page-content detail">
       <div className="scoreboard">
         <span>{match.homeTeam}</span><strong>{match.score ? `${match.score.home} - ${match.score.away}` : "VS"}</strong><span>{match.awayTeam}</span>
-        <p>{match.status === "live" ? `进行中 ${match.minute}分` : "未开始"} · {match.venue}</p>
+        <p>{match.status === "live" ? `进行中 ${match.minute}分` : new Date(match.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} · {match.venue}</p>
       </div>
       <div className="list-card events">
-        <h3>关键事件</h3>
-        <p>12分 车江二村 7号远射破门</p>
-        <p>31分 寨蒿队反击扳平</p>
-        <p>63分 车江二村头球再度领先</p>
+        <h3>{match.status === "scheduled" ? "赛前信息" : "关键事件"}</h3>
+        {match.status === "scheduled" ? (
+          <>
+            <p>比赛尚未开始，比分将在开赛后更新。</p>
+            <p>地点：{match.venue}</p>
+            {match.source && <p>赛程来源：{match.source}</p>}
+          </>
+        ) : (
+          <>
+            <p>12分 车江二村 7号远射破门</p>
+            <p>31分 寨蒿队反击扳平</p>
+            <p>63分 车江二村头球再度领先</p>
+          </>
+        )}
       </div>
       <SectionTitle title="互动讨论" />
       <CommentList comments={comments} onAction={onAction} />
