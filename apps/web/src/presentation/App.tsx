@@ -4,6 +4,7 @@ import type { AuthSession, Comment, ContentItem, Match, Post, Team, TravelGuide,
 import { useBootstrap } from "../application/useBootstrap";
 import { loginWithPhone, loginWithWechat, requestPhoneCode } from "../data/auth";
 import type { DetailView, TabKey } from "../domain/types";
+import { AdminDashboard } from "./AdminDashboard";
 
 const navItems: Array<{ key: TabKey; label: string; icon: typeof Home }> = [
   { key: "home", label: "首页", icon: Home },
@@ -73,6 +74,11 @@ export function App() {
 
   const league = data?.leagues.find((item) => item.id === selectedLeagueId);
   const leagueMatches = data?.matches.filter((match) => match.leagueId === selectedLeagueId) ?? [];
+
+  if (window.location.pathname.startsWith("/admin")) {
+    if (!data || loading) return <div className="admin-loading">正在加载运营后台...</div>;
+    return <AdminDashboard data={data} />;
+  }
 
   const recordActivity = (label: string, title: string, targetType: LocalActivity["targetType"]) => {
     const type = activityTypeMap[label] ?? "history";

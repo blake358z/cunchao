@@ -2,9 +2,11 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { AuthService } from "./services/auth-service.js";
 import { AppService } from "./services/app-service.js";
+import { AdminService } from "./services/admin-service.js";
 
 const service = new AppService();
 const auth = new AuthService();
+const admin = new AdminService();
 
 const phoneSchema = z.string().regex(/^1[3-9]\d{9}$/);
 
@@ -41,6 +43,29 @@ export async function registerRoutes(app: FastifyInstance) {
   });
 
   app.get("/api/bookings", async () => service.getBookingEvents());
+
+  app.get("/api/admin/overview", async () => admin.getOverview());
+
+  app.post("/api/admin/content/drafts", async (request) => {
+    const body = z.object({
+      title: z.string().min(2).max(120),
+      type: z.string().min(1).max(20),
+      owner: z.string().max(40).optional(),
+      source: z.string().max(40).optional()
+    }).parse(request.body);
+    return admin.createDraft(body);
+  });
+
+  app.post("/api/analytics/events", async (request) => {
+    const body = z.object({
+      event: z.string().min(1).max(80),
+      page: z.string().max(80).optional(),
+      targetId: z.string().max(120).optional(),
+      targetType: z.string().max(40).optional(),
+      properties: z.record(z.unknown()).optional()
+    }).parse(request.body);
+    return admin.trackEvent(body);
+  });
 
   app.post("/api/auth/phone/code", async (request, reply) => {
     const body = z.object({ phone: phoneSchema }).parse(request.body);
