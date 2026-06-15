@@ -1,7 +1,8 @@
 import { CalendarDays, Clock3, Heart, Home, MapPin, MessageCircle, Search, ShieldCheck, Star, UserRound } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { Comment, ContentItem, Match, Post, Team, TravelGuide } from "@cunchao/shared";
+import type { AuthSession, Comment, ContentItem, Match, Post, Team, TravelGuide, UserAccount } from "@cunchao/shared";
 import { useBootstrap } from "../application/useBootstrap";
+import { loginWithPhone, loginWithWechat, requestPhoneCode } from "../data/auth";
 import type { DetailView, TabKey } from "../domain/types";
 
 const navItems: Array<{ key: TabKey; label: string; icon: typeof Home }> = [
@@ -39,6 +40,14 @@ export function App() {
   const [detail, setDetail] = useState<DetailView>(null);
   const [teamTab, setTeamTab] = useState("资讯");
   const [toast, setToast] = useState("");
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [session, setSession] = useState<AuthSession | null>(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("cunchao.session") ?? "null") as AuthSession | null;
+    } catch {
+      return null;
+    }
+  });
   const [localActivities, setLocalActivities] = useState<LocalActivity[]>(() => {
     try {
       return JSON.parse(window.localStorage.getItem("cunchao.activities") ?? "[]") as LocalActivity[];
@@ -50,6 +59,11 @@ export function App() {
   useEffect(() => {
     window.localStorage.setItem("cunchao.activities", JSON.stringify(localActivities.slice(0, 40)));
   }, [localActivities]);
+
+  useEffect(() => {
+    if (session) window.localStorage.setItem("cunchao.session", JSON.stringify(session));
+    else window.localStorage.removeItem("cunchao.session");
+  }, [session]);
 
   const league = data?.leagues.find((item) => item.id === selectedLeagueId);
   const leagueMatches = data?.matches.filter((match) => match.leagueId === selectedLeagueId) ?? [];
@@ -81,6 +95,12 @@ export function App() {
   };
 
   const interact = (label: string, title = "当前内容", targetType: LocalActivity["targetType"] = "article") => {
+    if (!session && ["评论", "回复", "收藏", "收藏攻略", "关注", "预约入场"].includes(label)) {
+      setLoginOpen(true);
+      setToast("登录后可继续操作");
+      window.setTimeout(() => setToast(""), 1800);
+      return;
+    }
     recordActivity(label, title, targetType);
     setToast(`${label}已记录，可在“我的”里找回`);
     window.setTimeout(() => setToast(""), 1800);
@@ -144,8 +164,8 @@ export function App() {
     if (tab === "travel") {
       return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} matches={data.matches} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(guide) => openDetail({ type: "travel", id: guide.id }, guide.title)} onAction={interact} />;
     }
-    return <ProfilePage activities={[...localActivities, ...data.activities]} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id }, "球队详情")} />;
-  }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab, localActivities]);
+    return <ProfilePage user={session?.user ?? null} activities={[...localActivities, ...data.activities]} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id }, "球队详情")} onLogin={() => setLoginOpen(true)} onLogout={() => setSession(null)} />;
+  }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab, localActivities, session]);
 
   return (
     <div className="app-viewport">
@@ -153,6 +173,7 @@ export function App() {
         <Header title={getTitle(tab, detail)} canBack={Boolean(detail)} onBack={() => { setDetail(null); window.setTimeout(scrollScreenToTop, 0); }} />
         <main className="screen">{screen}</main>
         {!detail && <BottomNav active={tab} onChange={changeTab} />}
+        {loginOpen && <LoginSheet onClose={() => setLoginOpen(false)} onSuccess={(next) => { setSession(next); setLoginOpen(false); setToast("登录成功"); window.setTimeout(() => setToast(""), 1800); }} />}
         {toast && <div className="toast">{toast}</div>}
       </div>
     </div>
@@ -554,15 +575,102 @@ function GuideList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function ProfilePage({ activities, teams, onOpenTeam }: { activities: Array<{ id: string; title: string; type: string }>; teams: Team[]; onOpenTeam: (id: string) => void }) {
+function ProfilePage({ user, activities, teams, onOpenTeam, onLogin, onLogout }: { user: UserAccount | null; activities: Array<{ id: string; title: string; type: string }>; teams: Team[]; onOpenTeam: (id: string) => void; onLogin: () => void; onLogout: () => void }) {
   return (
     <section className="page-content">
-      <div className="profile-card"><div className="avatar" /><div><h2>村超球迷 Blake</h2><p>关注 4 个联赛 · 8 支球队</p></div></div>
+      <div className="profile-card">
+        <div className="avatar">{user?.avatar ? <img src={user.avatar} alt="" /> : null}</div>
+        <div>
+          <h2>{user ? user.nickname : "登录村超账号"}</h2>
+          <p>{user ? `已绑定 ${user.providers.map(providerLabel).join("、")} · 关注 ${user.followedTeamIds.length} 支球队` : "登录后同步收藏、评论、预约和关注球队"}</p>
+        </div>
+        {user ? <button onClick={onLogout}>退出</button> : <button onClick={onLogin}>登录</button>}
+      </div>
+      {!user && (
+        <div className="login-benefits">
+          <strong>账号体系已预留</strong>
+          <p>当前支持微信登录和手机号验证码登录演示；后续可接微信 openid、短信服务、数据库用户表和统一 token。</p>
+        </div>
+      )}
       <SectionTitle title="我关注的球队" />
       <div className="team-strip">{teams.slice(0, 3).map((team) => <button key={team.id} onClick={() => onOpenTeam(team.id)}>{team.name}</button>)}</div>
       <SectionTitle title="我的参与" />
       {activities.map((activity) => <div className="list-card activity" key={activity.id}><span>{activity.title}</span><strong>{activity.type}</strong></div>)}
     </section>
+  );
+}
+
+function LoginSheet({ onClose, onSuccess }: { onClose: () => void; onSuccess: (session: AuthSession) => void }) {
+  const [mode, setMode] = useState<"wechat" | "phone">("wechat");
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+  const [message, setMessage] = useState("手机号登录演示验证码：246810");
+  const [submitting, setSubmitting] = useState(false);
+
+  const sendCode = async () => {
+    if (!/^1[3-9]\d{9}$/.test(phone)) {
+      setMessage("请输入 11 位中国大陆手机号");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const result = await requestPhoneCode(phone);
+      setMessage(`验证码已发送至 ${result.maskedPhone}，演示码 246810`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const submitPhone = async () => {
+    setSubmitting(true);
+    try {
+      onSuccess(await loginWithPhone(phone, code));
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "登录失败，请稍后再试");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const submitWechat = async () => {
+    setSubmitting(true);
+    try {
+      onSuccess(await loginWithWechat());
+    } catch {
+      setMessage("微信登录暂时不可用，请改用手机号");
+      setMode("phone");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="login-overlay">
+      <div className="login-sheet">
+        <button className="sheet-close" onClick={onClose}>关闭</button>
+        <h2>登录村超账号</h2>
+        <p>登录后可同步收藏、评论、预约入场、关注球队和浏览历史。</p>
+        <div className="segmented login-tabs">
+          <button className={mode === "wechat" ? "selected" : ""} onClick={() => setMode("wechat")}>微信登录</button>
+          <button className={mode === "phone" ? "selected" : ""} onClick={() => setMode("phone")}>手机验证码</button>
+        </div>
+        {mode === "wechat" ? (
+          <div className="wechat-login">
+            <div className="wechat-mark">微</div>
+            <strong>使用微信一键登录</strong>
+            <p>正式接入时会通过微信授权 code 换取 openid/session_key。</p>
+            <button className="wechat-button" disabled={submitting} onClick={submitWechat}>{submitting ? "登录中..." : "微信登录"}</button>
+          </div>
+        ) : (
+          <div className="phone-login">
+            <label>手机号<input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="请输入手机号" inputMode="tel" /></label>
+            <label>验证码<div><input value={code} onChange={(event) => setCode(event.target.value)} placeholder="246810" inputMode="numeric" /><button disabled={submitting} onClick={sendCode}>获取验证码</button></div></label>
+            <button className="primary-wide" disabled={submitting} onClick={submitPhone}>{submitting ? "登录中..." : "登录"}</button>
+          </div>
+        )}
+        <small>{message}</small>
+      </div>
+    </div>
   );
 }
 
@@ -704,6 +812,10 @@ function getRecencyScore(value: string) {
   if (dayMatch) return Number(dayMatch[1]) * 24 * 60;
   if (value.includes("昨天")) return 24 * 60;
   return 999999;
+}
+
+function providerLabel(provider: "wechat" | "phone") {
+  return provider === "wechat" ? "微信" : "手机";
 }
 
 function normalizeText(value: string) {

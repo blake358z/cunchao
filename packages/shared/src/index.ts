@@ -143,6 +143,27 @@ export interface UserActivity {
   createdAt: string;
 }
 
+export type LoginProvider = "wechat" | "phone";
+
+export interface UserAccount {
+  id: string;
+  nickname: string;
+  avatar?: string;
+  phone?: string;
+  wechatOpenId?: string;
+  providers: LoginProvider[];
+  followedLeagueIds: string[];
+  followedTeamIds: string[];
+  createdAt: string;
+  lastLoginAt: string;
+}
+
+export interface AuthSession {
+  token: string;
+  user: UserAccount;
+  expiresAt: string;
+}
+
 export interface ApiEnvelope<T> {
   data: T;
   source: "mock" | "official" | "partner" | "external";
