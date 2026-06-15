@@ -3,9 +3,17 @@ apps/*/node_modules
 apps/*/dist
 packages/*/dist
 .vercel
+.git
+.tools
+docx_render
+prd_docx_render
 android/.gradle
 android/app/build
+android
 release
+ui_exports
+ui_exports_v2
+image_refs
 *.apk
 *.zip
 *.pdf
