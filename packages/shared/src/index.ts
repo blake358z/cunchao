@@ -79,6 +79,7 @@ export interface Comment {
   parentId?: string;
   replyTo?: string;
   author: string;
+  avatar?: string;
   body: string;
   likes: number;
   replies: number;

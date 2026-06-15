@@ -229,6 +229,20 @@ const communityAuthors = [
   "看台第三排"
 ];
 
+const avatarPool = Array.from({ length: 50 }, (_, index) => `/data/avatars/avatar-${String(index + 1).padStart(2, "0")}.svg`);
+
+function avatarForAuthor(author: string) {
+  let hash = 0;
+  for (const char of author) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return avatarPool[hash % avatarPool.length];
+}
+
+function avatarForComment(author: string, commentId: string) {
+  return avatarForAuthor(`${author}-${commentId}`);
+}
+
 const discussionTopics = [
   {
     id: "post-atmosphere",
@@ -554,12 +568,14 @@ function buildCommentsForTopic(topic: (typeof discussionTopics)[number], topicIn
     const body = isReply
       ? `回复 @${replyTo}：${replyBodies[(topicIndex + index) % replyBodies.length]}`
       : `${commentOpeners[(topicIndex + index) % commentOpeners.length]}${commentBodies[(topicIndex * 3 + index) % commentBodies.length]}`;
+    const id = `${topic.id}-comment-${String(index + 1).padStart(2, "0")}`;
     return {
-      id: `${topic.id}-comment-${String(index + 1).padStart(2, "0")}`,
+      id,
       postId: topic.id,
       parentId: parentIndex !== undefined ? `${topic.id}-comment-${String(parentIndex + 1).padStart(2, "0")}` : undefined,
       replyTo,
       author,
+      avatar: avatarForComment(author, id),
       body,
       likes: 8 + ((topicIndex * 17 + index * 11) % 180),
       replies: isReply ? 0 : (index + topicIndex) % 6,

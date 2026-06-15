@@ -440,7 +440,7 @@ function CommentList({ comments, onAction }: { comments: Comment[]; onAction: (l
     <div className="comments">
       {comments.map((comment) => (
         <div className={`comment ${comment.parentId ? "reply-comment" : ""}`} key={comment.id}>
-          <div className="mini-avatar" />
+          <div className="mini-avatar">{comment.avatar && <img src={comment.avatar} alt="" />}</div>
           <div>
             <strong>{comment.author}{comment.replyTo ? <span> 回复 {comment.replyTo}</span> : null}</strong>
             <p>{comment.body}</p>

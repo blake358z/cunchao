@@ -64,7 +64,8 @@ h1, h2, h3, p { margin: 0; }
 .events { padding: 14px; }
 .comments { display: grid; gap: 10px; }
 .comment { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 8px; }
-.mini-avatar, .avatar { width: 28px; height: 28px; border-radius: 50%; background: #edf0f5; }
+.mini-avatar, .avatar { width: 28px; height: 28px; border-radius: 50%; background: #edf0f5; overflow: hidden; }
+.mini-avatar img, .avatar img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .comment strong { font-size: 12px; }
 .comment strong span { color: #8a909b; font-weight: 600; }
 .comment p { margin: 5px 0 8px; font-size: 13px; line-height: 18px; }
