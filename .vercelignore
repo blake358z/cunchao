@@ -1,0 +1,13 @@
+node_modules
+apps/*/node_modules
+apps/*/dist
+packages/*/dist
+.vercel
+android/.gradle
+android/app/build
+release
+*.apk
+*.zip
+*.pdf
+*.pptx
+*.docx~
