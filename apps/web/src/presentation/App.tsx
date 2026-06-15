@@ -118,7 +118,6 @@ function getTitle(tab: TabKey, detail: DetailView) {
 function Header({ title, canBack, onBack }: { title: string; canBack: boolean; onBack: () => void }) {
   return (
     <header className="top">
-      <div className="status"><span>9:41</span><strong>村超</strong><span /></div>
       <div className="bar">
         {canBack ? <button className="ghost" onClick={onBack}>返回</button> : <strong>{title}</strong>}
         {canBack && <strong>{title}</strong>}

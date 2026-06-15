@@ -13,12 +13,10 @@ button:focus-visible { outline: 2px solid rgba(230, 50, 42, .35); outline-offset
 .app-viewport { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
 .phone-shell { position: relative; width: min(390px, 100vw); height: min(844px, calc(100vh - 24px)); background: #f6f7fa; overflow: hidden; border-radius: 26px; box-shadow: 0 24px 60px rgba(16, 24, 40, .18); }
 .top { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 1px solid #e7e9ee; }
-.status { height: 44px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding: 0 20px; font-size: 12px; }
-.status strong { text-align: center; font-size: 13px; }
-.bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 18px; }
+.bar { height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 17px; }
 .bar svg, .bottom-nav svg { color: #e6322a; }
 .ghost { color: #6b7280; font-size: 13px; }
-.screen { height: calc(100% - 88px); overflow: auto; padding-bottom: 104px; }
+.screen { height: calc(100% - 42px); overflow: auto; padding-bottom: 104px; }
 .page-content { padding: 14px 16px 24px; }
 .bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; display: grid; grid-template-columns: repeat(5, 1fr); background: #fff; border-top: 1px solid #e7e9ee; z-index: 6; }
 .bottom-nav button { display: grid; gap: 4px; place-items: center; align-content: center; color: #747985; font-size: 11px; }
