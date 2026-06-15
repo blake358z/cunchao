@@ -1,5 +1,5 @@
-import { CalendarDays, Heart, Home, MapPin, MessageCircle, Search, Star, UserRound } from "lucide-react";
-import { useMemo, useState } from "react";
+import { CalendarDays, Clock3, Heart, Home, MapPin, MessageCircle, Search, ShieldCheck, Star, UserRound } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import type { Comment, ContentItem, Match, Post, Team, TravelGuide } from "@cunchao/shared";
 import { useBootstrap } from "../application/useBootstrap";
 import type { DetailView, TabKey } from "../domain/types";
@@ -12,6 +12,26 @@ const navItems: Array<{ key: TabKey; label: string; icon: typeof Home }> = [
   { key: "profile", label: "我的", icon: UserRound }
 ];
 
+type LocalActivity = {
+  id: string;
+  type: "comment" | "like" | "favorite" | "history";
+  title: string;
+  targetType: "article" | "post" | "match" | "team" | "travel";
+  createdAt: string;
+};
+
+const activityTypeMap: Record<string, LocalActivity["type"]> = {
+  点赞: "like",
+  评论: "comment",
+  回复: "comment",
+  评论点赞: "like",
+  收藏: "favorite",
+  收藏攻略: "favorite",
+  关注: "favorite",
+  预约入场: "history",
+  分享攻略: "history"
+};
+
 export function App() {
   const { data, loading } = useBootstrap();
   const [tab, setTab] = useState<TabKey>("home");
@@ -19,16 +39,49 @@ export function App() {
   const [detail, setDetail] = useState<DetailView>(null);
   const [teamTab, setTeamTab] = useState("资讯");
   const [toast, setToast] = useState("");
+  const [localActivities, setLocalActivities] = useState<LocalActivity[]>(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("cunchao.activities") ?? "[]") as LocalActivity[];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem("cunchao.activities", JSON.stringify(localActivities.slice(0, 40)));
+  }, [localActivities]);
 
   const league = data?.leagues.find((item) => item.id === selectedLeagueId);
   const leagueMatches = data?.matches.filter((match) => match.leagueId === selectedLeagueId) ?? [];
 
-  const openDetail = (next: DetailView) => {
-    setDetail(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const recordActivity = (label: string, title: string, targetType: LocalActivity["targetType"]) => {
+    const type = activityTypeMap[label] ?? "history";
+    setLocalActivities((current) => [
+      {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        type,
+        title: `${label}：${title}`,
+        targetType,
+        createdAt: "刚刚"
+      },
+      ...current
+    ].slice(0, 40));
   };
 
-  const interact = (label: string) => {
+  const openDetail = (next: DetailView, title?: string) => {
+    setDetail(next);
+    if (next?.type && title) recordActivity("浏览", title, next.type === "match" || next.type === "team" || next.type === "travel" ? next.type : next.type === "post" ? "post" : "article");
+    window.setTimeout(scrollScreenToTop, 0);
+  };
+
+  const changeTab = (next: TabKey) => {
+    setTab(next);
+    setDetail(null);
+    window.setTimeout(scrollScreenToTop, 0);
+  };
+
+  const interact = (label: string, title = "当前内容", targetType: LocalActivity["targetType"] = "article") => {
+    recordActivity(label, title, targetType);
     setToast(`${label}已记录，可在“我的”里找回`);
     window.setTimeout(() => setToast(""), 1800);
   };
@@ -37,7 +90,7 @@ export function App() {
     if (!data || loading) return <LoadingScreen />;
     if (detail?.type === "match") {
       const match = data.matches.find((item) => item.id === detail.id) ?? data.matches[0];
-      return <MatchDetail match={match} comments={data.comments} onBack={() => setDetail(null)} onAction={interact} />;
+      return <MatchDetail match={match} comments={data.comments} teams={data.teams} onBack={() => setDetail(null)} onAction={interact} />;
     }
     if (detail?.type === "team") {
       const team = data.teams.find((item) => item.id === detail.id) ?? data.teams[0];
@@ -70,7 +123,7 @@ export function App() {
     }
 
     if (tab === "home") {
-      return <HomePage contents={data.contents} matches={data.matches} onOpenArticle={(id) => openDetail({ type: "article", id })} onOpenMatch={(id) => openDetail({ type: "match", id })} onAction={interact} />;
+      return <HomePage contents={data.contents} matches={data.matches} posts={data.posts} leagues={data.leagues} onOpenArticle={(item) => openDetail({ type: "article", id: item.id }, item.title)} onOpenMatch={(match) => openDetail({ type: "match", id: match.id }, `${match.homeTeam} vs ${match.awayTeam}`)} onOpenPost={(post) => openDetail({ type: "post", id: post.id }, post.title)} onAction={interact} />;
     }
     if (tab === "events") {
       return (
@@ -80,26 +133,26 @@ export function App() {
           setSelectedLeagueId={setSelectedLeagueId}
           matches={leagueMatches}
           standings={data.standings}
-          onOpenMatch={(id) => openDetail({ type: "match", id })}
-          onOpenTeam={(id) => openDetail({ type: "team", id })}
+          onOpenMatch={(match) => openDetail({ type: "match", id: match.id }, `${match.homeTeam} vs ${match.awayTeam}`)}
+          onOpenTeam={(id) => openDetail({ type: "team", id }, "球队详情")}
         />
       );
     }
     if (tab === "community") {
-      return <CommunityPage posts={data.posts} onOpenPost={(id) => openDetail({ type: "post", id })} />;
+      return <CommunityPage posts={data.posts} onOpenPost={(post) => openDetail({ type: "post", id: post.id }, post.title)} />;
     }
     if (tab === "travel") {
-      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(id) => openDetail({ type: "travel", id })} onAction={interact} />;
+      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(guide) => openDetail({ type: "travel", id: guide.id }, guide.title)} onAction={interact} />;
     }
-    return <ProfilePage activities={data.activities} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id })} />;
-  }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab]);
+    return <ProfilePage activities={[...localActivities, ...data.activities]} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id }, "球队详情")} />;
+  }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab, localActivities]);
 
   return (
     <div className="app-viewport">
       <div className="phone-shell">
-        <Header title={getTitle(tab, detail)} canBack={Boolean(detail)} onBack={() => setDetail(null)} />
+        <Header title={getTitle(tab, detail)} canBack={Boolean(detail)} onBack={() => { setDetail(null); window.setTimeout(scrollScreenToTop, 0); }} />
         <main className="screen">{screen}</main>
-        {!detail && <BottomNav active={tab} onChange={setTab} />}
+        {!detail && <BottomNav active={tab} onChange={changeTab} />}
         {toast && <div className="toast">{toast}</div>}
       </div>
     </div>
@@ -144,49 +197,85 @@ function LoadingScreen() {
   return <div className="loading">正在加载村超赛事数据...</div>;
 }
 
-function HomePage({ contents, matches, onOpenArticle, onOpenMatch, onAction }: { contents: ContentItem[]; matches: Match[]; onOpenArticle: (id: string) => void; onOpenMatch: (id: string) => void; onAction: (label: string) => void }) {
-  const live = matches.find((match) => match.status === "live") ?? matches[0];
+function HomePage({ contents, matches, posts, leagues, onOpenArticle, onOpenMatch, onOpenPost, onAction }: { contents: ContentItem[]; matches: Match[]; posts: Post[]; leagues: Array<{ id: string; shortName: string; name: string }>; onOpenArticle: (item: ContentItem) => void; onOpenMatch: (match: Match) => void; onOpenPost: (post: Post) => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
+  const [feedType, setFeedType] = useState("全部");
+  const focus = matches.find((match) => match.status === "live") ?? matches[0];
+  const upcoming = matches.filter((match) => match.status === "scheduled").slice(0, 3);
+  const selectedContents = feedType === "全部" ? contents : contents.filter((item) => {
+    if (feedType === "村超") return item.leagueId === "gzcunchao";
+    if (feedType === "苏超") return item.leagueId === "js-super";
+    if (feedType === "文旅") return item.type === "travel";
+    return item.type === "article" || item.type === "news";
+  });
+  const topPost = posts[0];
   return (
     <section className="page-content">
-      <button className="hero-card" onClick={() => onOpenMatch(live.id)}>
+      <button className="hero-card" onClick={() => onOpenMatch(focus)}>
         <img src="/assets/football-crowd.jpg" alt="村超现场" />
         <div>
-          <h1>今晚焦点：{live.homeTeam}迎战{live.awayTeam}</h1>
-          <p>赛前热度 12.8万 · {live.venue}</p>
+          <span className="hero-kicker">{focus.status === "live" ? "正在进行" : "今日焦点"}</span>
+          <h1>{focus.homeTeam} vs {focus.awayTeam}</h1>
+          <p>{formatMatchTime(focus)} · {focus.venue}</p>
         </div>
       </button>
+      <div className="today-panel">
+        <div>
+          <strong>今天看什么</strong>
+          <p>{leagues.length} 个联赛频道 · {upcoming.length} 场未来赛程 · 每日自动更新</p>
+        </div>
+        <button onClick={() => onOpenMatch(focus)}>看赛程</button>
+      </div>
+      <SectionTitle title="未来赛程" />
+      <div className="mini-match-strip">
+        {upcoming.map((match) => <button key={match.id} onClick={() => onOpenMatch(match)}><strong>{match.homeTeam} vs {match.awayTeam}</strong><span>{formatShortDate(match.startsAt)} · {match.venue}</span></button>)}
+      </div>
+      {topPost && (
+        <>
+          <SectionTitle title="社区热帖" />
+          <button className="list-card hot-post" onClick={() => onOpenPost(topPost)}>
+            <strong>{topPost.title}</strong>
+            <p>{topPost.body}</p>
+            <span>{topPost.author} · 赞 {topPost.likes} · 评 {topPost.comments}</span>
+          </button>
+        </>
+      )}
+      <SectionTitle title="最新资讯" />
       <div className="chips">
-        {["全部", "村超", "苏超", "战报", "文旅"].map((item, index) => <button className={index === 0 ? "selected" : ""} key={item}>{item}</button>)}
+        {["全部", "村超", "苏超", "战报", "文旅"].map((item) => <button className={feedType === item ? "selected" : ""} key={item} onClick={() => setFeedType(item)}>{item}</button>)}
       </div>
       <div className="feed">
-        {contents.map((item) => (
-          <ArticleRow key={item.id} item={item} onOpen={() => onOpenArticle(item.id)} onAction={onAction} />
+        {selectedContents.map((item) => (
+          <ArticleRow key={item.id} item={item} onOpen={() => onOpenArticle(item)} onAction={onAction} />
         ))}
       </div>
     </section>
   );
 }
 
-function ArticleRow({ item, onOpen, onAction }: { item: ContentItem; onOpen: () => void; onAction: (label: string) => void }) {
+function ArticleRow({ item, onOpen, onAction }: { item: ContentItem; onOpen: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   return (
     <article className="list-card article-row">
       <button onClick={onOpen}>
         <div>
+          <span className="source-chip">{item.source}</span>
           <h3>{item.title}</h3>
-          <p>{item.source} · 赞 {item.likes} · 评 {item.comments} · 藏 {item.favorites}</p>
+          <p>{formatPublishTime(item.publishedAt)} · 赞 {item.likes} · 评 {item.comments} · 藏 {item.favorites}</p>
         </div>
         <img src={item.image} alt="" />
       </button>
       <div className="action-line">
-        <button onClick={() => onAction("点赞")}>点赞</button>
-        <button onClick={() => onAction("评论")}>评论</button>
-        <button onClick={() => onAction("收藏")}>收藏</button>
+        <button onClick={() => onAction("点赞", item.title, "article")}>点赞</button>
+        <button onClick={() => onAction("评论", item.title, "article")}>评论</button>
+        <button onClick={() => onAction("收藏", item.title, "article")}>收藏</button>
       </div>
     </article>
   );
 }
 
-function EventsPage({ leagues, selectedLeagueId, setSelectedLeagueId, matches, standings, onOpenMatch, onOpenTeam }: { leagues: Array<{ id: string; shortName: string; name: string; liveHint?: string; nextHint?: string }>; selectedLeagueId: string; setSelectedLeagueId: (id: string) => void; matches: Match[]; standings: Array<{ rank: number; teamName: string; points: number; teamId: string }>; onOpenMatch: (id: string) => void; onOpenTeam: (id: string) => void }) {
+function EventsPage({ leagues, selectedLeagueId, setSelectedLeagueId, matches, standings, onOpenMatch, onOpenTeam }: { leagues: Array<{ id: string; shortName: string; name: string; liveHint?: string; nextHint?: string; description?: string }>; selectedLeagueId: string; setSelectedLeagueId: (id: string) => void; matches: Match[]; standings: Array<{ rank: number; teamName: string; points: number; teamId: string }>; onOpenMatch: (match: Match) => void; onOpenTeam: (id: string) => void }) {
+  const [range, setRange] = useState("14天");
+  const selectedLeague = leagues.find((league) => league.id === selectedLeagueId);
+  const filteredMatches = matches.filter((match) => filterMatchByRange(match, range));
   return (
     <section className="page-content">
       <div className="chips league-tabs">
@@ -206,10 +295,21 @@ function EventsPage({ leagues, selectedLeagueId, setSelectedLeagueId, matches, s
           </button>
         ))}
       </div>
-      <SectionTitle title="未来两周赛程" />
-      {matches.length ? matches.map((match) => <MatchCard key={match.id} match={match} onOpen={() => onOpenMatch(match.id)} />) : (
+      {selectedLeague && (
+        <div className="list-card league-brief">
+          <strong>{selectedLeague.name}</strong>
+          <p>{selectedLeague.description ?? "联赛资料正在补充。"}</p>
+          <span>{selectedLeague.nextHint ?? "赛程持续更新中"}</span>
+        </div>
+      )}
+      <SectionTitle title="赛程筛选" />
+      <div className="segmented">
+        {["今日", "明日", "14天"].map((item) => <button key={item} className={range === item ? "selected" : ""} onClick={() => setRange(item)}>{item}</button>)}
+      </div>
+      <SectionTitle title={range === "14天" ? "未来两周赛程" : `${range}赛程`} />
+      {filteredMatches.length ? filteredMatches.map((match) => <MatchCard key={match.id} match={match} onOpen={() => onOpenMatch(match)} />) : (
         <div className="list-card empty-card">
-          <strong>暂无未来两周赛程</strong>
+          <strong>暂无{range}赛程</strong>
           <p>每日更新任务会继续抓取官方赛程；拿到结构化数据后会自动补入这里。</p>
         </div>
       )}
@@ -233,17 +333,26 @@ function MatchCard({ match, onOpen }: { match: Match; onOpen: () => void }) {
       <span>{match.homeTeam}</span>
       <strong className={match.status === "live" ? "live" : ""}>{score}</strong>
       <span>{match.awayTeam}</span>
-      <small>{match.status === "live" ? `进行中 ${match.minute}分` : `${date} · ${match.venue}`}</small>
+      <small><em>{matchStatusLabel(match)}</em>{match.status === "live" ? `进行中 ${match.minute}分` : `${date} · ${match.venue}`}</small>
     </button>
   );
 }
 
-function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
+function MatchDetail({ match, comments, teams, onBack, onAction }: { match: Match; comments: Comment[]; teams: Team[]; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
+  const homeTeam = teams.find((team) => team.id === match.homeTeamId);
+  const awayTeam = teams.find((team) => team.id === match.awayTeamId);
+  const title = `${match.homeTeam} vs ${match.awayTeam}`;
   return (
     <section className="page-content detail">
       <div className="scoreboard">
+        <div className="match-status-pill">{matchStatusLabel(match)}</div>
         <span>{match.homeTeam}</span><strong>{match.score ? `${match.score.home} - ${match.score.away}` : "VS"}</strong><span>{match.awayTeam}</span>
-        <p>{match.status === "live" ? `进行中 ${match.minute}分` : new Date(match.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} · {match.venue}</p>
+        <p>{formatMatchTime(match)} · {match.venue}</p>
+      </div>
+      <div className="match-facts">
+        <div><Clock3 size={16} /><span>{formatMatchTime(match)}</span></div>
+        <div><MapPin size={16} /><span>{match.venue}</span></div>
+        <div><ShieldCheck size={16} /><span>{match.source ? "官方赛程源" : "数据每日更新"}</span></div>
       </div>
       <div className="list-card events">
         <h3>{match.status === "scheduled" ? "赛前信息" : "关键事件"}</h3>
@@ -252,6 +361,7 @@ function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comm
             <p>比赛尚未开始，比分将在开赛后更新。</p>
             <p>地点：{match.venue}</p>
             {match.source && <p>赛程来源：{match.source}</p>}
+            {match.originalUrl && <a href={match.originalUrl} target="_blank" rel="noreferrer">查看官方赛程</a>}
           </>
         ) : (
           <>
@@ -261,15 +371,29 @@ function MatchDetail({ match, comments, onBack, onAction }: { match: Match; comm
           </>
         )}
       </div>
+      <div className="team-vs-grid">
+        {[homeTeam, awayTeam].map((team) => team && (
+          <div className="list-card team-mini" key={team.id}>
+            <strong>{team.name}</strong>
+            <p>{team.record} · {team.village}</p>
+            <span>{team.intro}</span>
+          </div>
+        ))}
+      </div>
+      <div className="action-line prominent match-actions">
+        <button onClick={() => onAction("预约入场", title, "match")}>预约入场</button>
+        <button onClick={() => onAction("关注", title, "match")}>关注比赛</button>
+        <button onClick={() => onAction("评论", title, "match")}>参与讨论</button>
+      </div>
       <SectionTitle title="互动讨论" />
-      <CommentList comments={comments} onAction={onAction} />
+      <CommentList comments={comments.slice(0, 24)} onAction={(label) => onAction(label, title, "match")} />
       <p className="scroll-hint">下滑继续加载评论</p>
       <button className="primary-wide" onClick={onBack}>返回赛事频道</button>
     </section>
   );
 }
 
-function TeamDetail({ team, teamTab, setTeamTab, contents, matches, comments, onBack, onOpenMatch, onAction }: { team: Team; teamTab: string; setTeamTab: (tab: string) => void; contents: ContentItem[]; matches: Match[]; comments: Comment[]; onBack: () => void; onOpenMatch: (id: string) => void; onAction: (label: string) => void }) {
+function TeamDetail({ team, teamTab, setTeamTab, contents, matches, comments, onBack, onOpenMatch, onAction }: { team: Team; teamTab: string; setTeamTab: (tab: string) => void; contents: ContentItem[]; matches: Match[]; comments: Comment[]; onBack: () => void; onOpenMatch: (id: string) => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   const tabs = ["资讯", "赛程", "球员", "讨论", "球队信息"];
   return (
     <section className="page-content detail">
@@ -280,7 +404,7 @@ function TeamDetail({ team, teamTab, setTeamTab, contents, matches, comments, on
       <div className="chips compact">
         {tabs.map((tab) => <button key={tab} className={teamTab === tab ? "selected" : ""} onClick={() => setTeamTab(tab)}>{tab}</button>)}
       </div>
-      {teamTab === "资讯" && contents.slice(0, 2).map((item) => <ArticleRow key={item.id} item={item} onOpen={() => onAction("打开资讯")} onAction={onAction} />)}
+      {teamTab === "资讯" && contents.slice(0, 2).map((item) => <ArticleRow key={item.id} item={item} onOpen={() => onAction("打开资讯", item.title, "article")} onAction={onAction} />)}
       {teamTab === "赛程" && matches.filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id).map((match) => <MatchCard key={match.id} match={match} onOpen={() => onOpenMatch(match.id)} />)}
       {teamTab === "球员" && <PlayerGrid />}
       {teamTab === "讨论" && <><CommentList comments={comments} onAction={onAction} /><p className="scroll-hint">下滑继续加载帖子</p></>}
@@ -294,12 +418,12 @@ function PlayerGrid() {
   return <div className="player-grid">{["7 石明宇 · 前锋", "10 杨再兴 · 中场", "3 吴江 · 后卫", "1 王守门 · 门将"].map((item) => <div className="list-card" key={item}>{item}</div>)}</div>;
 }
 
-function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (id: string) => void }) {
+function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (post: Post) => void }) {
   return (
     <section className="page-content">
       <div className="chips"><button className="selected">推荐</button><button>村超</button><button>苏超</button><button>球队圈</button></div>
       {posts.map((post) => (
-        <button className="list-card post-card" key={post.id} onClick={() => onOpenPost(post.id)}>
+        <button className="list-card post-card" key={post.id} onClick={() => onOpenPost(post)}>
           <h3>{post.title}</h3>
           <p>{post.body}</p>
           <small>{post.author} · {post.createdAt}</small>
@@ -310,7 +434,7 @@ function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (id: 
   );
 }
 
-function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { guides: TravelGuide[]; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; leagueName: string; onOpenGuide: (id: string) => void; onAction: (label: string) => void }) {
+function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { guides: TravelGuide[]; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; leagueName: string; onOpenGuide: (guide: TravelGuide) => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   return (
     <section className="page-content">
       <SectionTitle title="按比赛预约入场" />
@@ -318,12 +442,12 @@ function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { g
         <div className="list-card booking" key={booking.id}>
           <h3>{booking.title}</h3>
           <p>{new Date(booking.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} · {booking.venue} · 余量充足</p>
-          <button onClick={() => onAction("预约入场")}>预约入场</button><button>换场次</button>
+          <button onClick={() => onAction("预约入场", booking.title, "match")}>预约入场</button><button>换场次</button>
         </div>
       ))}
       <SectionTitle title="未来两周比赛村寨" />
       {guides.map((guide) => (
-        <button className="travel-card" key={guide.id} onClick={() => onOpenGuide(guide.id)}>
+        <button className="travel-card" key={guide.id} onClick={() => onOpenGuide(guide)}>
           <img src={guide.image} alt="" />
           <h3>{guide.title}</h3>
           <p>{guide.startsAt ? `${new Date(guide.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} · ${guide.venue} · 对阵 ${guide.opponent}` : guide.summary}</p>
@@ -335,7 +459,7 @@ function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { g
   );
 }
 
-function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack: () => void; onAction: (label: string) => void }) {
+function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   return (
     <section className="page-content detail">
       <img className="detail-image" src={guide.image} alt="" />
@@ -361,7 +485,7 @@ function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack:
           {guide.sourceUrls.map((url) => <a href={url} target="_blank" rel="noreferrer" key={url}>{url.replace(/^https?:\/\//, "")}</a>)}
         </div>
       ) : null}
-      <div className="action-line prominent"><button onClick={() => onAction("收藏攻略")}>收藏</button><button onClick={() => onAction("分享攻略")}>分享</button><button onClick={() => onAction("预约入场")}>预约</button></div>
+      <div className="action-line prominent"><button onClick={() => onAction("收藏攻略", guide.title, "travel")}>收藏</button><button onClick={() => onAction("分享攻略", guide.title, "travel")}>分享</button><button onClick={() => onAction("预约入场", guide.title, "travel")}>预约</button></div>
       <button className="primary-wide" onClick={onBack}>返回文旅服务</button>
     </section>
   );
@@ -388,17 +512,34 @@ function ProfilePage({ activities, teams, onOpenTeam }: { activities: Array<{ id
   );
 }
 
-function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
+function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Comment[]; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   const bodyBlocks = (article.body ?? article.summary).split(/\n{2,}/).filter(Boolean);
   const sourceBlocks = bodyBlocks.filter((block) => block.startsWith("来源：") || block.startsWith("原文："));
-  const contentBlocks = bodyBlocks.filter((block) => !sourceBlocks.includes(block));
+  const rawContentBlocks = bodyBlocks
+    .filter((block) => !sourceBlocks.includes(block))
+    .filter((block, index, list) => list.findIndex((item) => normalizeText(item) === normalizeText(block)) === index);
+  const uniqueRawBlocks = rawContentBlocks.filter((block) => {
+    const normalizedBlock = normalizeText(block);
+    const normalizedSummary = normalizeText(article.summary);
+    return normalizedBlock !== normalizedSummary && !normalizedBlock.startsWith(normalizedSummary) && !normalizedSummary.startsWith(normalizedBlock);
+  });
+  const contentBlocks = uniqueRawBlocks.length > 1 ? uniqueRawBlocks : [
+    article.summary,
+    uniqueRawBlocks[0] ?? "本文根据公开发布信息整理，重点保留比赛时间、地点、赛事状态和原文来源，方便球迷快速判断是否需要继续查看官方原文。",
+    "后续接入官方或合作数据源后，正文会进一步补充阵容、现场提醒、交通预约和相关球队资料。"
+  ].filter(Boolean);
   const originalUrl = article.originalUrl ?? sourceBlocks.find((block) => block.startsWith("原文："))?.replace("原文：", "");
   return (
     <section className="page-content detail">
       <img className="detail-image" src={article.image} alt="" />
       <h1 className="detail-title">{article.title}</h1>
-      <p className="meta">{article.source} · 赞 {article.likes} · 评 {article.comments} · 藏 {article.favorites}</p>
+      <p className="meta">{article.source} · {formatPublishTime(article.publishedAt)} · 赞 {article.likes} · 评 {article.comments} · 藏 {article.favorites}</p>
       {article.imageCredit && <p className="image-credit">图片来源：{article.imageCredit}</p>}
+      <div className="trust-strip">
+        <span><ShieldCheck size={14} />来源已标注</span>
+        <span><Clock3 size={14} />每日更新</span>
+        <span><MessageCircle size={14} />可讨论</span>
+      </div>
       <div className="body-copy">
         {contentBlocks.map((block) => <p key={block}>{block}</p>)}
       </div>
@@ -407,27 +548,28 @@ function ArticleDetail({ article, comments, onBack, onAction }: { article: Conte
         <span>{article.source}</span>
         {originalUrl && <a href={originalUrl} target="_blank" rel="noreferrer">查看原文</a>}
       </div>
-      <div className="action-line prominent"><button onClick={() => onAction("点赞")}>点赞</button><button onClick={() => onAction("评论")}>评论</button><button onClick={() => onAction("收藏")}>收藏</button></div>
+      <div className="action-line prominent"><button onClick={() => onAction("点赞", article.title, "article")}>点赞</button><button onClick={() => onAction("评论", article.title, "article")}>评论</button><button onClick={() => onAction("收藏", article.title, "article")}>收藏</button></div>
       <SectionTitle title="热门评论" />
-      <CommentList comments={comments} onAction={onAction} />
+      <CommentList comments={comments.slice(0, 32)} onAction={(label) => onAction(label, article.title, "article")} />
       <p className="scroll-hint">下滑继续加载评论</p>
       <button className="primary-wide" onClick={onBack}>返回首页</button>
     </section>
   );
 }
 
-function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments: Comment[]; onBack: () => void; onAction: (label: string) => void }) {
+function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments: Comment[]; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
   return (
     <section className="page-content detail">
       <article className="list-card post-main">
+        <span className="source-chip">社区热帖</span>
         <h1>{post.title}</h1>
         <p>楼主 {post.author} · {post.createdAt}</p>
         <div>{post.body}</div>
         <strong>赞 {post.likes} · 评论 {post.comments} · 收藏 {post.favorites}</strong>
       </article>
-      <div className="action-line prominent"><button onClick={() => onAction("点赞")}>点赞</button><button onClick={() => onAction("回复")}>回复</button><button onClick={() => onAction("收藏")}>收藏</button></div>
+      <div className="action-line prominent"><button onClick={() => onAction("点赞", post.title, "post")}>点赞</button><button onClick={() => onAction("回复", post.title, "post")}>回复</button><button onClick={() => onAction("收藏", post.title, "post")}>收藏</button></div>
       <SectionTitle title="全部评论" />
-      <CommentList comments={comments} onAction={onAction} />
+      <CommentList comments={comments} onAction={(label) => onAction(label, post.title, "post")} />
       <p className="scroll-hint">下滑继续加载评论</p>
       <button className="primary-wide" onClick={onBack}>返回社区</button>
     </section>
@@ -439,9 +581,9 @@ function CommentList({ comments, onAction }: { comments: Comment[]; onAction: (l
     <div className="comments">
       {comments.map((comment) => (
         <div className={`comment ${comment.parentId ? "reply-comment" : ""}`} key={comment.id}>
-          <div className="mini-avatar">{comment.avatar && <img src={comment.avatar} alt="" />}</div>
+          <div className="mini-avatar">{comment.avatar ? <img src={comment.avatar} alt="" /> : <span>{comment.author.slice(0, 1)}</span>}</div>
           <div>
-            <strong>{comment.author}{comment.replyTo ? <span> 回复 {comment.replyTo}</span> : null}</strong>
+            <strong>{comment.author}{comment.likes > 120 && <em>高赞</em>}{comment.replyTo ? <span> 回复 {comment.replyTo}</span> : null}</strong>
             <p>{comment.body}</p>
             <button onClick={() => onAction("评论点赞")}>赞 {comment.likes}</button><button onClick={() => onAction("回复")}>回复 {comment.replies}</button>
           </div>
@@ -449,6 +591,43 @@ function CommentList({ comments, onAction }: { comments: Comment[]; onAction: (l
       ))}
     </div>
   );
+}
+
+function formatShortDate(value: string) {
+  return new Date(value).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function formatPublishTime(value: string) {
+  return new Date(value).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function formatMatchTime(match: Match) {
+  if (match.status === "live") return `进行中 ${match.minute ?? ""}分`;
+  return new Date(match.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function matchStatusLabel(match: Match) {
+  if (match.status === "live") return "进行中";
+  if (match.status === "finished") return "已结束";
+  if (match.status === "postponed") return "延期";
+  return "未开始";
+}
+
+function filterMatchByRange(match: Match, range: string) {
+  if (range === "14天") return true;
+  const now = new Date();
+  const date = new Date(match.startsAt);
+  const target = new Date(now);
+  if (range === "明日") target.setDate(now.getDate() + 1);
+  return date.getFullYear() === target.getFullYear() && date.getMonth() === target.getMonth() && date.getDate() === target.getDate();
+}
+
+function normalizeText(value: string) {
+  return value.replace(/\s+/g, "").replace(/[，。！？、：；,.!?;:]/g, "");
+}
+
+function scrollScreenToTop() {
+  document.querySelector(".screen")?.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function SectionTitle({ title }: { title: string }) {
