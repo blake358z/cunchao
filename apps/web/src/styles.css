@@ -112,6 +112,17 @@ h1, h2, h3, p { margin: 0; }
 .player-grid .list-card { padding: 14px; font-size: 13px; font-weight: 700; }
 .post-card { display: block; text-align: left; padding: 16px 14px; margin-bottom: 10px; }
 .post-card small { display: block; margin-top: 8px; color: #8a909b; font-size: 11px; line-height: 15px; }
+.community-brief, .travel-brief { padding: 15px 14px; border-radius: 12px; background: #fff; border: 1px solid #e7e9ee; }
+.community-brief strong, .travel-brief strong { font-size: 17px; }
+.community-brief p, .travel-brief p { margin-top: 7px; color: #6f7580; font-size: 12px; line-height: 18px; }
+.rank-list { display: grid; gap: 8px; }
+.rank-row { min-height: 42px; padding: 0 12px; border-radius: 8px; background: #fff; border: 1px solid #e7e9ee; display: grid; grid-template-columns: 24px 1fr 44px; align-items: center; gap: 8px; text-align: left; }
+.rank-row em { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #e6322a; color: #fff; font-size: 11px; font-style: normal; font-weight: 900; }
+.rank-row span { font-size: 13px; font-weight: 800; line-height: 18px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rank-row strong { color: #e6322a; font-size: 11px; text-align: right; }
+.post-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #8a909b; font-size: 11px; }
+.post-card-head span { color: #4a505b; font-weight: 800; }
+.post-card-head em { font-style: normal; flex: 0 0 auto; }
 .travel-card { display: block; width: 100%; margin-bottom: 10px; background: #fff; border-radius: 8px; border: 1px solid #e7e9ee; padding-bottom: 14px; overflow: hidden; text-align: left; }
 .travel-card img, .detail-image { width: 100%; height: 150px; object-fit: cover; display: block; border-radius: 8px; }
 .travel-card h3, .travel-card p { padding: 12px 14px 0; }
@@ -126,6 +137,11 @@ h1, h2, h3, p { margin: 0; }
 .booking h3 { font-size: 15px; }
 .booking p { color: #6f7580; margin: 8px 0 14px; font-size: 12px; }
 .booking button { height: 28px; padding: 0 14px; border-radius: 999px; border: 1px solid #e7e9ee; margin-right: 8px; font-size: 12px; font-weight: 700; }
+.travel-match-list { display: grid; gap: 8px; }
+.travel-match { min-height: 58px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.travel-match strong { font-size: 13px; line-height: 18px; }
+.travel-match p { margin-top: 5px; color: #6f7580; font-size: 11px; line-height: 15px; }
+.travel-match button, .travel-match span { flex: 0 0 auto; border-radius: 999px; padding: 7px 10px; background: #fff1f0; color: #e6322a; font-size: 11px; font-weight: 900; }
 .team-strip { display: flex; gap: 8px; overflow: auto; }
 .team-strip button { flex: 0 0 auto; padding: 10px 12px; background: #fff; border: 1px solid #e7e9ee; border-radius: 8px; font-weight: 700; }
 .activity { padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; }
@@ -147,6 +163,21 @@ h1, h2, h3, p { margin: 0; }
 .post-main { padding: 16px 14px; }
 .post-main h1 { font-size: 19px; line-height: 25px; }
 .post-main strong { display: block; margin-top: 14px; color: #e6322a; font-size: 12px; }
+.author-line { display: flex; align-items: center; gap: 9px; margin-top: 12px; }
+.author-line p { display: grid; gap: 2px; }
+.author-line p strong { margin: 0; color: #30343b; font-size: 13px; }
+.author-line small { color: #8a909b; font-size: 11px; }
+.featured-comments { display: grid; gap: 8px; }
+.featured-comment { padding: 12px; text-align: left; }
+.featured-comment strong { font-size: 13px; }
+.featured-comment p { margin-top: 7px; color: #3d424c; font-size: 13px; line-height: 19px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.featured-comment span { display: block; margin-top: 8px; color: #e6322a; font-size: 11px; font-weight: 800; }
+.itinerary-card { margin-top: 12px; padding: 14px; border-radius: 10px; background: #fff; border: 1px solid #e7e9ee; }
+.itinerary-card > strong { display: block; font-size: 15px; margin-bottom: 10px; }
+.itinerary-card div { display: grid; grid-template-columns: 42px 1fr; gap: 8px; padding: 8px 0; border-top: 1px solid #eef0f4; }
+.itinerary-card div:first-of-type { border-top: 0; padding-top: 0; }
+.itinerary-card span { color: #e6322a; font-size: 12px; font-weight: 900; }
+.itinerary-card p { color: #4a505b; font-size: 12px; line-height: 18px; }
 .primary-wide { width: 100%; height: 42px; border-radius: 8px; background: #111318; color: #fff; font-weight: 800; margin-top: 14px; }
 .toast { position: absolute; left: 20px; right: 20px; bottom: 86px; z-index: 10; background: rgba(17, 19, 24, .92); color: #fff; border-radius: 10px; padding: 12px; text-align: center; font-size: 13px; }
 .loading { padding: 80px 20px; color: #6f7580; text-align: center; }

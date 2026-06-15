@@ -142,7 +142,7 @@ export function App() {
       return <CommunityPage posts={data.posts} onOpenPost={(post) => openDetail({ type: "post", id: post.id }, post.title)} />;
     }
     if (tab === "travel") {
-      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(guide) => openDetail({ type: "travel", id: guide.id }, guide.title)} onAction={interact} />;
+      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} matches={data.matches} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(guide) => openDetail({ type: "travel", id: guide.id }, guide.title)} onAction={interact} />;
     }
     return <ProfilePage activities={[...localActivities, ...data.activities]} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id }, "球队详情")} />;
   }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab, localActivities]);
@@ -419,24 +419,57 @@ function PlayerGrid() {
 }
 
 function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (post: Post) => void }) {
+  const [filter, setFilter] = useState("热榜");
+  const sortedPosts = [...posts].sort((left, right) => {
+    if (filter === "最新") return getRecencyScore(left.createdAt) - getRecencyScore(right.createdAt);
+    return right.likes + right.comments * 3 + right.favorites * 2 - (left.likes + left.comments * 3 + left.favorites * 2);
+  });
+  const filteredPosts = sortedPosts.filter((post) => {
+    if (filter === "村超") return post.leagueId === "gzcunchao";
+    if (filter === "球队圈") return Boolean(post.teamId) || post.title.includes("队");
+    return true;
+  });
+  const hotPosts = sortedPosts.slice(0, 3);
   return (
     <section className="page-content">
-      <div className="chips"><button className="selected">推荐</button><button>村超</button><button>苏超</button><button>球队圈</button></div>
-      {posts.map((post) => (
+      <div className="community-brief">
+        <strong>今天大家在聊</strong>
+        <p>{posts.length} 个话题 · {posts.reduce((sum, post) => sum + post.comments, 0)} 条讨论 · 热点按互动自动排序</p>
+      </div>
+      <SectionTitle title="热榜前三" />
+      <div className="rank-list">
+        {hotPosts.map((post, index) => (
+          <button className="rank-row" key={post.id} onClick={() => onOpenPost(post)}>
+            <em>{index + 1}</em>
+            <span>{post.title}</span>
+            <strong>{post.comments}评</strong>
+          </button>
+        ))}
+      </div>
+      <div className="chips">
+        {["热榜", "最新", "村超", "苏超", "球队圈"].map((item) => <button className={filter === item ? "selected" : ""} key={item} onClick={() => setFilter(item)}>{item}</button>)}
+      </div>
+      {filteredPosts.length ? filteredPosts.map((post) => (
         <button className="list-card post-card" key={post.id} onClick={() => onOpenPost(post)}>
+          <div className="post-card-head"><span>{post.author}</span><em>{post.createdAt}</em></div>
           <h3>{post.title}</h3>
           <p>{post.body}</p>
-          <small>{post.author} · {post.createdAt}</small>
           <span>赞 {post.likes} · 评 {post.comments} · 藏 {post.favorites}</span>
         </button>
-      ))}
+      )) : <EmptyCard title="暂无匹配话题" body="换一个频道看看，后续接入真实用户后这里会按联赛、球队和位置自动聚合。" />}
     </section>
   );
 }
 
-function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { guides: TravelGuide[]; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; leagueName: string; onOpenGuide: (guide: TravelGuide) => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
+function TravelPage({ guides, bookings, matches, leagueName, onOpenGuide, onAction }: { guides: TravelGuide[]; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; matches: Match[]; leagueName: string; onOpenGuide: (guide: TravelGuide) => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
+  const upcomingMatches = matches.filter((match) => match.status === "scheduled").slice(0, 4);
+  const guideByMatch = new Map(guides.filter((guide) => guide.matchId).map((guide) => [guide.matchId, guide]));
   return (
     <section className="page-content">
+      <div className="travel-brief">
+        <strong>跟着比赛去村寨</strong>
+        <p>{leagueName} 未来两周赛程会自动匹配球队、村寨、吃住行攻略；已有攻略会优先复用。</p>
+      </div>
       <SectionTitle title="按比赛预约入场" />
       {bookings.map((booking) => (
         <div className="list-card booking" key={booking.id}>
@@ -445,6 +478,21 @@ function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { g
           <button onClick={() => onAction("预约入场", booking.title, "match")}>预约入场</button><button>换场次</button>
         </div>
       ))}
+      <SectionTitle title="比赛日计划" />
+      <div className="travel-match-list">
+        {upcomingMatches.map((match) => {
+          const guide = guideByMatch.get(match.id) ?? guides.find((item) => item.teamId === match.homeTeamId || item.teamId === match.awayTeamId);
+          return (
+            <div className="list-card travel-match" key={match.id}>
+              <div>
+                <strong>{match.homeTeam} vs {match.awayTeam}</strong>
+                <p>{formatShortDate(match.startsAt)} · {match.venue}</p>
+              </div>
+              {guide ? <button onClick={() => onOpenGuide(guide)}>看攻略</button> : <span>攻略待匹配</span>}
+            </div>
+          );
+        })}
+      </div>
       <SectionTitle title="未来两周比赛村寨" />
       {guides.map((guide) => (
         <button className="travel-card" key={guide.id} onClick={() => onOpenGuide(guide)}>
@@ -454,7 +502,7 @@ function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { g
           <div className="tag-line">{guide.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
         </button>
       ))}
-      {!guides.length && <div className="list-card empty-card"><strong>暂无匹配村寨攻略</strong><p>每日赛程更新后，会按比赛双方球队自动匹配村寨和球队资料。</p></div>}
+      {!guides.length && <EmptyCard title="暂无匹配村寨攻略" body="每日赛程更新后，会按比赛双方球队自动匹配村寨和球队资料。" />}
     </section>
   );
 }
@@ -466,6 +514,12 @@ function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack:
       <h1 className="detail-title">{guide.village ?? guide.title}</h1>
       <p className="meta">{guide.teamName} · {guide.startsAt ? new Date(guide.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : guide.region} · {guide.venue}</p>
       {guide.imageCredit && <p className="image-credit">图片来源：{guide.imageCredit}</p>}
+      <div className="itinerary-card">
+        <strong>比赛日建议</strong>
+        <div><span>赛前</span><p>提前 2-3 小时到达，先确认入场口、停车点和返程路线。</p></div>
+        <div><span>赛中</span><p>优先轻装看球，老人小孩选择通道更清晰的位置。</p></div>
+        <div><span>赛后</span><p>错峰离场，夜宵和住宿建议提前收藏备用。</p></div>
+      </div>
       <div className="list-card prose travel-detail-block">
         <h3>村寨介绍</h3>
         <p>{guide.intro ?? guide.summary}</p>
@@ -510,6 +564,10 @@ function ProfilePage({ activities, teams, onOpenTeam }: { activities: Array<{ id
       {activities.map((activity) => <div className="list-card activity" key={activity.id}><span>{activity.title}</span><strong>{activity.type}</strong></div>)}
     </section>
   );
+}
+
+function EmptyCard({ title, body }: { title: string; body: string }) {
+  return <div className="list-card empty-card"><strong>{title}</strong><p>{body}</p></div>;
 }
 
 function ArticleDetail({ article, comments, onBack, onAction }: { article: ContentItem; comments: Comment[]; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
@@ -558,16 +616,30 @@ function ArticleDetail({ article, comments, onBack, onAction }: { article: Conte
 }
 
 function PostDetail({ post, comments, onBack, onAction }: { post: Post; comments: Comment[]; onBack: () => void; onAction: (label: string, title?: string, targetType?: LocalActivity["targetType"]) => void }) {
+  const hotComments = [...comments].sort((left, right) => right.likes - left.likes).slice(0, 3);
   return (
     <section className="page-content detail">
       <article className="list-card post-main">
         <span className="source-chip">社区热帖</span>
         <h1>{post.title}</h1>
-        <p>楼主 {post.author} · {post.createdAt}</p>
+        <div className="author-line">
+          <div className="mini-avatar"><span>{post.author.slice(0, 1)}</span></div>
+          <p><strong>{post.author}</strong><small>楼主 · {post.createdAt}</small></p>
+        </div>
         <div>{post.body}</div>
         <strong>赞 {post.likes} · 评论 {post.comments} · 收藏 {post.favorites}</strong>
       </article>
       <div className="action-line prominent"><button onClick={() => onAction("点赞", post.title, "post")}>点赞</button><button onClick={() => onAction("回复", post.title, "post")}>回复</button><button onClick={() => onAction("收藏", post.title, "post")}>收藏</button></div>
+      <SectionTitle title="高赞回复" />
+      <div className="featured-comments">
+        {hotComments.map((comment) => (
+          <button className="list-card featured-comment" key={comment.id} onClick={() => onAction("评论点赞", post.title, "post")}>
+            <strong>{comment.author}</strong>
+            <p>{comment.body}</p>
+            <span>赞 {comment.likes} · 回复 {comment.replies}</span>
+          </button>
+        ))}
+      </div>
       <SectionTitle title="全部评论" />
       <CommentList comments={comments} onAction={(label) => onAction(label, post.title, "post")} />
       <p className="scroll-hint">下滑继续加载评论</p>
@@ -620,6 +692,18 @@ function filterMatchByRange(match: Match, range: string) {
   const target = new Date(now);
   if (range === "明日") target.setDate(now.getDate() + 1);
   return date.getFullYear() === target.getFullYear() && date.getMonth() === target.getMonth() && date.getDate() === target.getDate();
+}
+
+function getRecencyScore(value: string) {
+  if (value.includes("刚刚")) return 0;
+  const minuteMatch = value.match(/(\d+)分钟/);
+  if (minuteMatch) return Number(minuteMatch[1]);
+  const hourMatch = value.match(/(\d+)小时/);
+  if (hourMatch) return Number(hourMatch[1]) * 60;
+  const dayMatch = value.match(/(\d+)天/);
+  if (dayMatch) return Number(dayMatch[1]) * 24 * 60;
+  if (value.includes("昨天")) return 24 * 60;
+  return 999999;
 }
 
 function normalizeText(value: string) {
