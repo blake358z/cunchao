@@ -6,6 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const sourcesPath = path.join(rootDir, "data/sources.json");
 const manualMatchesPath = path.join(rootDir, "data/manual/matches.json");
+const villageGuidesPath = path.join(rootDir, "data/manual/village-guides.json");
 const outputPath = path.join(rootDir, "apps/web/public/data/bootstrap.json");
 const imageOutputDir = path.join(rootDir, "apps/web/public/data/images");
 const publicImageBasePath = "/data/images";
@@ -32,6 +33,7 @@ const {
 
 const sources = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
 const manualMatches = JSON.parse(await fs.readFile(manualMatchesPath, "utf8"));
+const villageGuideStore = JSON.parse(await fs.readFile(villageGuidesPath, "utf8"));
 const minimumCollectedItems = Number(process.env.MIN_COLLECTED_ITEMS ?? 3);
 
 function stripHtml(html) {
@@ -391,6 +393,68 @@ function mergeMatches(primary, fallback) {
     });
 }
 
+function fallbackVillageGuide(teamId, teamName, leagueId) {
+  return {
+    teamId,
+    teamName,
+    village: teamName.replace(/队$/, ""),
+    leagueId,
+    region: "待补充",
+    image: "/assets/village-scene.jpg",
+    summary: "该球队/村寨资料待补充，先展示比赛信息、基础路线和通用看球攻略。",
+    intro: "资料库尚未收录该村寨。后续拿到官方介绍、达人攻略或合作商家资料后，可在资料库中补齐并自动复用。",
+    teamIntro: "球队资料待补充，可先关注赛程、对手、地点和社区讨论。",
+    players: ["核心球员待补充", "门将待补充", "后卫待补充", "前锋待补充"],
+    travelTips: ["比赛日前确认开球时间和入场方式。", "优先选择官方发布的交通与停车信息。", "热门比赛建议提前到场，给安检和入场留足时间。"],
+    lodgingTips: ["热门比赛日提前预订住宿。", "首次到访建议优先选择交通便利区域。", "多人同行需提前确认停车、床型和退改政策。"],
+    foodTips: ["赛前选择出餐快的小吃或粉面。", "赛后再安排正餐更从容。", "地方特色口味可提前说明少辣。"],
+    sourceUrls: []
+  };
+}
+
+function buildTravelGuidesForMatches(futureMatches, guideStore) {
+  const guideByTeamId = new Map((guideStore.guides ?? []).map((guide) => [guide.teamId, guide]));
+  const cards = [];
+  const seen = new Set();
+
+  for (const match of futureMatches) {
+    const sides = [
+      { teamId: match.homeTeamId, teamName: match.homeTeam, opponent: match.awayTeam },
+      { teamId: match.awayTeamId, teamName: match.awayTeam, opponent: match.homeTeam }
+    ];
+    for (const side of sides) {
+      const guide = guideByTeamId.get(side.teamId) ?? fallbackVillageGuide(side.teamId, side.teamName, match.leagueId);
+      const key = `${match.id}-${side.teamId}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      cards.push({
+        id: `guide-${key}`,
+        title: `${side.teamName} · ${guide.village}看球攻略`,
+        leagueId: match.leagueId,
+        region: guide.region,
+        image: guide.image,
+        summary: guide.summary,
+        tags: ["比赛村寨", "球队故事", "吃住行"],
+        matchId: match.id,
+        teamId: side.teamId,
+        teamName: side.teamName,
+        village: guide.village,
+        opponent: side.opponent,
+        startsAt: match.startsAt,
+        venue: match.venue,
+        intro: guide.intro,
+        teamIntro: guide.teamIntro,
+        players: guide.players,
+        travelTips: guide.travelTips,
+        lodgingTips: guide.lodgingTips,
+        foodTips: guide.foodTips,
+        sourceUrls: guide.sourceUrls
+      });
+    }
+  }
+  return cards;
+}
+
 function formatMatchHint(match) {
   const startsAt = new Date(match.startsAt);
   const label = startsAt.toLocaleString("zh-CN", {
@@ -448,6 +512,7 @@ const scheduleItems = collectedContents.filter((item) => item.type === "article"
 const collectedMatches = scheduleItems.flatMap(extractMatchesFromContent);
 const mergedContents = mergeById(collectedContents, fallbackContents).slice(0, 60);
 const mergedMatches = mergeMatches([...(manualMatches.matches ?? []), ...collectedMatches], fallbackMatches);
+const matchedTravelGuides = buildTravelGuidesForMatches(mergedMatches, villageGuideStore);
 
 const payload = {
   data: {
@@ -458,7 +523,7 @@ const payload = {
     contents: mergedContents,
     posts,
     comments,
-    travelGuides,
+    travelGuides: matchedTravelGuides.length ? matchedTravelGuides : travelGuides,
     bookingEvents,
     activities
   },
@@ -469,6 +534,7 @@ const payload = {
     collectedContentCount: collectedContents.length,
     collectedMatchCount: collectedMatches.length,
     matchCount: mergedMatches.length,
+    travelGuideCount: matchedTravelGuides.length,
     matchWindowDays,
     manualMatchCount: manualMatches.matches?.length ?? 0,
     lastCheckedAt: new Date().toISOString(),

@@ -14763,16 +14763,191 @@
     ],
     "travelGuides": [
       {
-        "id": "guide-sanbao",
-        "title": "三宝侗寨路线：赛前吃酸汤鱼，赛后看侗族大歌",
+        "id": "guide-match-next-1-team-zhongcheng",
+        "title": "忠诚队 · 忠诚镇看球攻略",
         "leagueId": "gzcunchao",
-        "region": "榕江",
+        "region": "贵州榕江",
         "image": "/assets/village-scene.jpg",
-        "summary": "支持按联赛、球队、附近、热门村寨搜索，不把几百个村寨平铺在顶部。",
+        "summary": "适合把看球、侗寨风情、集镇夜宵和短途自驾串成半日路线。",
         "tags": [
-          "附近",
-          "热门村寨",
-          "球队筛选"
+          "比赛村寨",
+          "球队故事",
+          "吃住行"
+        ],
+        "matchId": "match-next-1",
+        "teamId": "team-zhongcheng",
+        "teamName": "忠诚队",
+        "village": "忠诚镇",
+        "opponent": "平永队",
+        "startsAt": "2026-06-15T19:30:00+08:00",
+        "venue": "榕江一号场",
+        "intro": "忠诚镇位于榕江县域内，是村超球队和周边村寨生活场景结合度很高的目的地。看球前后可以用集镇补给、村寨走访和本地餐饮组成轻量行程。",
+        "teamIntro": "忠诚队在现有样例数据中以阵型稳定、防守反击效率高为特点，适合在球队页继续沉淀队史、荣誉、球员故事和村寨背景。",
+        "players": [
+          "10号 中场组织者",
+          "1号 门将",
+          "7号 边路突击手",
+          "5号 中后卫"
+        ],
+        "travelTips": [
+          "比赛日前 2-3 小时抵达榕江城区或球场周边，避免散场高峰反向移动。",
+          "如果只安排半天，建议以球场、集镇餐饮、附近村寨短停为主。",
+          "带老人小孩时，优先选择步行距离短、返程清晰的停车点。"
+        ],
+        "lodgingTips": [
+          "周末和热门比赛日建议提前预订榕江县城酒店或民宿。",
+          "如果想体验村寨民宿，需要提前确认交通、热水、停车和返程时间。",
+          "亲子出行优先选择县城交通便利、退房灵活的住宿。"
+        ],
+        "foodTips": [
+          "酸汤鱼适合作为正餐，赛前别排太晚。",
+          "卷粉、米粉、烧烤适合赛后夜宵。",
+          "第一次尝试牛瘪等地方特色，建议少量尝鲜。"
+        ],
+        "sourceUrls": [
+          "https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/index.html",
+          "https://www.gzcunchao.com/"
+        ]
+      },
+      {
+        "id": "guide-match-next-1-team-pingyong",
+        "title": "平永队 · 平永镇看球攻略",
+        "leagueId": "gzcunchao",
+        "region": "贵州榕江",
+        "image": "/assets/village-scene.jpg",
+        "summary": "适合关注球队故事、乡镇集市和榕江周边短途路线的球迷。",
+        "tags": [
+          "比赛村寨",
+          "球队故事",
+          "吃住行"
+        ],
+        "matchId": "match-next-1",
+        "teamId": "team-pingyong",
+        "teamName": "平永队",
+        "village": "平永镇",
+        "opponent": "忠诚队",
+        "startsAt": "2026-06-15T19:30:00+08:00",
+        "venue": "榕江一号场",
+        "intro": "平永镇是榕江村超叙事里适合沉淀球队文化和乡镇生活攻略的节点。产品内可把球队赛程、村寨介绍、吃住行建议和球迷讨论串联展示。",
+        "teamIntro": "平永队在样例数据中以中场控球和阵地推进为特点，适合补充核心球员、过往战绩和村寨荣誉。",
+        "players": [
+          "8号 中场节拍器",
+          "11号 前锋",
+          "3号 后卫",
+          "6号 后腰"
+        ],
+        "travelTips": [
+          "如果比赛在晚间，白天可以先安排县城和周边村寨，再返回球场。",
+          "关注天气变化，雨天建议穿防滑鞋并带轻便雨具。",
+          "散场后先步行离开核心拥堵区域，再考虑打车或接驳。"
+        ],
+        "lodgingTips": [
+          "热门比赛日县城住宿更稳，村寨住宿更有体验但需要提前沟通交通。",
+          "自驾游客确认停车条件，避免夜间临时找车位。",
+          "多人同行可以选择家庭房或民宿整租，方便赛后休息。"
+        ],
+        "foodTips": [
+          "赛前适合吃米粉、卷粉等快餐，减少排队时间。",
+          "赛后可以安排酸汤鱼或烧烤。",
+          "本地蘸水、糯米饭、腌鱼等可作为轻量尝鲜。"
+        ],
+        "sourceUrls": [
+          "https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/index.html",
+          "https://www.gzcunchao.com/"
+        ]
+      },
+      {
+        "id": "guide-match-next-2-team-dali",
+        "title": "大利队 · 大利侗寨看球攻略",
+        "leagueId": "gzcunchao",
+        "region": "贵州榕江",
+        "image": "/assets/village-scene.jpg",
+        "summary": "大利侗寨适合做成“看球+侗寨漫游+拍照”的重点卡片。",
+        "tags": [
+          "比赛村寨",
+          "球队故事",
+          "吃住行"
+        ],
+        "matchId": "match-next-2",
+        "teamId": "team-dali",
+        "teamName": "大利队",
+        "village": "大利侗寨",
+        "opponent": "乐里队",
+        "startsAt": "2026-06-16T16:00:00+08:00",
+        "venue": "榕江一号场",
+        "intro": "大利侗寨是榕江侗寨旅行中辨识度较高的目的地，适合展示侗族建筑、村寨漫步、摄影点和非遗体验。和村超赛程结合后，可以形成比赛前后一日游路线。",
+        "teamIntro": "大利队可围绕侗寨身份、村寨荣誉、球员日常职业和赛季表现继续补充内容。",
+        "players": [
+          "9号 前锋",
+          "12号 门将",
+          "4号 中卫",
+          "17号 边前卫"
+        ],
+        "travelTips": [
+          "适合安排 2-3 小时村寨漫游，拍风雨桥、鼓楼、木楼街巷。",
+          "尊重村寨生活秩序，拍摄人物前尽量先沟通。",
+          "比赛日不建议把行程排得太满，留出返程和入场缓冲。"
+        ],
+        "lodgingTips": [
+          "想体验侗寨清晨和夜晚，可以选择村寨民宿。",
+          "重视安静和便利的游客可住县城，再做半日往返。",
+          "预订时确认是否含早餐、是否方便接送。"
+        ],
+        "foodTips": [
+          "可关注侗家酸汤、腌鱼、糯米饭等地方口味。",
+          "村寨餐饮接待能力有限，团队出行建议提前预约。",
+          "赛后回县城吃夜宵选择更多。"
+        ],
+        "sourceUrls": [
+          "https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/index.html",
+          "https://www.gzcunchao.com/"
+        ]
+      },
+      {
+        "id": "guide-match-next-2-team-leli",
+        "title": "乐里队 · 乐里镇看球攻略",
+        "leagueId": "gzcunchao",
+        "region": "贵州榕江",
+        "image": "/assets/village-scene.jpg",
+        "summary": "适合展示乡镇球队文化、山地村寨风貌和赛前赛后轻攻略。",
+        "tags": [
+          "比赛村寨",
+          "球队故事",
+          "吃住行"
+        ],
+        "matchId": "match-next-2",
+        "teamId": "team-leli",
+        "teamName": "乐里队",
+        "village": "乐里镇",
+        "opponent": "大利队",
+        "startsAt": "2026-06-16T16:00:00+08:00",
+        "venue": "榕江一号场",
+        "intro": "乐里镇可作为榕江村超多乡镇联动展示的一张卡片，重点呈现球队、乡镇生活、交通提醒和球迷真实攻略。",
+        "teamIntro": "乐里队后续可补充球队历史、核心球员、经典比赛和村寨荣誉，形成球队主页的长期内容资产。",
+        "players": [
+          "10号 前腰",
+          "2号 边后卫",
+          "15号 中锋",
+          "18号 替补奇兵"
+        ],
+        "travelTips": [
+          "外地游客建议先以榕江县城为中转，再根据比赛时间安排乐里相关行程。",
+          "山地道路和天气变化会影响时间，行程要留余量。",
+          "适合把球队故事和村寨打卡做成轻量路线。"
+        ],
+        "lodgingTips": [
+          "首次到榕江建议优先住县城，交通和餐饮更集中。",
+          "若选择乡镇住宿，提前确认导航位置、停车和返程方案。",
+          "比赛日住宿紧张时，可考虑周边县市作为备选。"
+        ],
+        "foodTips": [
+          "赛前选择米粉、卷粉等快餐更省时间。",
+          "赛后可以回县城吃酸汤鱼、烧烤和夜市小吃。",
+          "地方特色口味偏酸辣，老人小孩可提前说明少辣。"
+        ],
+        "sourceUrls": [
+          "https://www.guizhou.gov.cn/ztzl/gzcfa/lssc/index.html",
+          "https://www.gzcunchao.com/"
         ]
       }
     ],
@@ -14819,16 +14994,17 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-15T04:33:15.329Z",
+  "updatedAt": "2026-06-15T04:40:34.424Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
     "collectedMatchCount": 30,
     "matchCount": 2,
+    "travelGuideCount": 4,
     "matchWindowDays": 14,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-06-15T04:33:15.329Z",
-    "lastAttemptCollectedContentCount": 0,
-    "updateStatus": "retained_existing_low_collection"
+    "lastCheckedAt": "2026-06-15T04:40:34.424Z",
+    "lastAttemptCollectedContentCount": 12,
+    "updateStatus": "updated"
   }
 }

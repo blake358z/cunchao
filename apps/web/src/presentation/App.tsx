@@ -1,6 +1,6 @@
 import { CalendarDays, Heart, Home, MapPin, MessageCircle, Search, Star, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { Comment, ContentItem, Match, Post, Team } from "@cunchao/shared";
+import type { Comment, ContentItem, Match, Post, Team, TravelGuide } from "@cunchao/shared";
 import { useBootstrap } from "../application/useBootstrap";
 import type { DetailView, TabKey } from "../domain/types";
 
@@ -64,6 +64,10 @@ export function App() {
       const postComments = data.comments.filter((comment) => comment.postId === post.id);
       return <PostDetail post={post} comments={postComments.length ? postComments : data.comments.slice(0, 50)} onBack={() => setDetail(null)} onAction={interact} />;
     }
+    if (detail?.type === "travel") {
+      const guide = data.travelGuides.find((item) => item.id === detail.id) ?? data.travelGuides[0];
+      return <TravelDetail guide={guide} onBack={() => setDetail(null)} onAction={interact} />;
+    }
 
     if (tab === "home") {
       return <HomePage contents={data.contents} matches={data.matches} onOpenArticle={(id) => openDetail({ type: "article", id })} onOpenMatch={(id) => openDetail({ type: "match", id })} onAction={interact} />;
@@ -85,7 +89,7 @@ export function App() {
       return <CommunityPage posts={data.posts} onOpenPost={(id) => openDetail({ type: "post", id })} />;
     }
     if (tab === "travel") {
-      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} leagueName={league?.name ?? "贵州村超"} onAction={interact} />;
+      return <TravelPage guides={data.travelGuides} bookings={data.bookingEvents} leagueName={league?.name ?? "贵州村超"} onOpenGuide={(id) => openDetail({ type: "travel", id })} onAction={interact} />;
     }
     return <ProfilePage activities={data.activities} teams={data.teams} onOpenTeam={(id) => openDetail({ type: "team", id })} />;
   }, [data, loading, detail, tab, selectedLeagueId, leagueMatches, league, teamTab]);
@@ -107,6 +111,7 @@ function getTitle(tab: TabKey, detail: DetailView) {
   if (detail?.type === "team") return "球队详情";
   if (detail?.type === "article") return "资讯详情";
   if (detail?.type === "post") return "帖子详情";
+  if (detail?.type === "travel") return "村寨攻略";
   return { home: "平台首页", events: "赛事频道", community: "社区", travel: "文旅服务", profile: "我的" }[tab];
 }
 
@@ -306,7 +311,7 @@ function CommunityPage({ posts, onOpenPost }: { posts: Post[]; onOpenPost: (id: 
   );
 }
 
-function TravelPage({ guides, bookings, leagueName, onAction }: { guides: Array<{ id: string; title: string; summary: string; image: string; tags: string[] }>; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; leagueName: string; onAction: (label: string) => void }) {
+function TravelPage({ guides, bookings, leagueName, onOpenGuide, onAction }: { guides: TravelGuide[]; bookings: Array<{ id: string; title: string; venue: string; startsAt: string; availability: string }>; leagueName: string; onOpenGuide: (id: string) => void; onAction: (label: string) => void }) {
   return (
     <section className="page-content">
       <SectionTitle title="按比赛预约入场" />
@@ -317,16 +322,56 @@ function TravelPage({ guides, bookings, leagueName, onAction }: { guides: Array<
           <button onClick={() => onAction("预约入场")}>预约入场</button><button>换场次</button>
         </div>
       ))}
-      <SectionTitle title={`${leagueName} 村寨文旅攻略`} />
+      <SectionTitle title="未来两周比赛村寨" />
       {guides.map((guide) => (
-        <article className="travel-card" key={guide.id}>
+        <button className="travel-card" key={guide.id} onClick={() => onOpenGuide(guide.id)}>
           <img src={guide.image} alt="" />
           <h3>{guide.title}</h3>
-          <p>{guide.summary}</p>
-          <div className="chips compact">{guide.tags.concat("搜索").map((tag, index) => <button className={index === 0 ? "selected" : ""} key={tag}>{tag}</button>)}</div>
-        </article>
+          <p>{guide.startsAt ? `${new Date(guide.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} · ${guide.venue} · 对阵 ${guide.opponent}` : guide.summary}</p>
+          <div className="tag-line">{guide.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        </button>
       ))}
+      {!guides.length && <div className="list-card empty-card"><strong>暂无匹配村寨攻略</strong><p>每日赛程更新后，会按比赛双方球队自动匹配村寨和球队资料。</p></div>}
     </section>
+  );
+}
+
+function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack: () => void; onAction: (label: string) => void }) {
+  return (
+    <section className="page-content detail">
+      <img className="detail-image" src={guide.image} alt="" />
+      <h1 className="detail-title">{guide.village ?? guide.title}</h1>
+      <p className="meta">{guide.teamName} · {guide.startsAt ? new Date(guide.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : guide.region} · {guide.venue}</p>
+      <div className="list-card prose travel-detail-block">
+        <h3>村寨介绍</h3>
+        <p>{guide.intro ?? guide.summary}</p>
+      </div>
+      <div className="list-card prose travel-detail-block">
+        <h3>队伍介绍</h3>
+        <p>{guide.teamIntro ?? "球队资料待补充。"}</p>
+      </div>
+      <GuideList title="队员速览" items={guide.players ?? []} />
+      <GuideList title="旅游攻略" items={guide.travelTips ?? []} />
+      <GuideList title="住宿攻略" items={guide.lodgingTips ?? []} />
+      <GuideList title="饮食攻略" items={guide.foodTips ?? []} />
+      {guide.sourceUrls?.length ? (
+        <div className="source-box">
+          <strong>资料来源</strong>
+          {guide.sourceUrls.map((url) => <a href={url} target="_blank" rel="noreferrer" key={url}>{url.replace(/^https?:\/\//, "")}</a>)}
+        </div>
+      ) : null}
+      <div className="action-line prominent"><button onClick={() => onAction("收藏攻略")}>收藏</button><button onClick={() => onAction("分享攻略")}>分享</button><button onClick={() => onAction("预约入场")}>预约</button></div>
+      <button className="primary-wide" onClick={onBack}>返回文旅服务</button>
+    </section>
+  );
+}
+
+function GuideList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="list-card prose travel-detail-block">
+      <h3>{title}</h3>
+      {items.length ? items.map((item) => <p key={item}>{item}</p>) : <p>资料待补充。</p>}
+    </div>
   );
 }
 

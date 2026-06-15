@@ -106,6 +106,20 @@ export interface TravelGuide {
   image: string;
   summary: string;
   tags: string[];
+  matchId?: string;
+  teamId?: string;
+  teamName?: string;
+  village?: string;
+  opponent?: string;
+  startsAt?: string;
+  venue?: string;
+  intro?: string;
+  teamIntro?: string;
+  players?: string[];
+  travelTips?: string[];
+  lodgingTips?: string[];
+  foodTips?: string[];
+  sourceUrls?: string[];
 }
 
 export interface BookingEvent {

@@ -17,6 +17,7 @@ export type DetailView =
   | { type: "team"; id: string }
   | { type: "article"; id: string }
   | { type: "post"; id: string }
+  | { type: "travel"; id: string }
   | null;
 
 export interface BootstrapData {
@@ -31,4 +32,3 @@ export interface BootstrapData {
   bookingEvents: BookingEvent[];
   activities: UserActivity[];
 }
-
