@@ -21,6 +21,12 @@ type LocalActivity = {
   createdAt: string;
 };
 
+type WechatWindow = Window & {
+  wx?: {
+    login?: (options: { fail?: (error: unknown) => void; success?: (result: { code?: string }) => void }) => void;
+  };
+};
+
 const activityTypeMap: Record<string, LocalActivity["type"]> = {
   点赞: "like",
   评论: "comment",
@@ -589,7 +595,7 @@ function ProfilePage({ user, activities, teams, onOpenTeam, onLogin, onLogout }:
       {!user && (
         <div className="login-benefits">
           <strong>账号体系已预留</strong>
-          <p>当前支持微信登录和手机号验证码登录演示；后续可接微信 openid、短信服务、数据库用户表和统一 token。</p>
+          <p>当前支持微信真实授权和手机号短信验证码登录；需要配置后端 API、微信密钥和短信服务后使用。</p>
         </div>
       )}
       <SectionTitle title="我关注的球队" />
@@ -604,7 +610,7 @@ function LoginSheet({ onClose, onSuccess }: { onClose: () => void; onSuccess: (s
   const [mode, setMode] = useState<"wechat" | "phone">("wechat");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
-  const [message, setMessage] = useState("手机号登录演示验证码：246810");
+  const [message, setMessage] = useState("请输入手机号获取真实短信验证码");
   const [submitting, setSubmitting] = useState(false);
 
   const sendCode = async () => {
@@ -615,7 +621,9 @@ function LoginSheet({ onClose, onSuccess }: { onClose: () => void; onSuccess: (s
     setSubmitting(true);
     try {
       const result = await requestPhoneCode(phone);
-      setMessage(`验证码已发送至 ${result.maskedPhone}，演示码 246810`);
+      setMessage(`验证码已发送至 ${result.maskedPhone}，5 分钟内有效`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "验证码发送失败，请稍后再试");
     } finally {
       setSubmitting(false);
     }
@@ -635,10 +643,10 @@ function LoginSheet({ onClose, onSuccess }: { onClose: () => void; onSuccess: (s
   const submitWechat = async () => {
     setSubmitting(true);
     try {
-      onSuccess(await loginWithWechat());
+      const wechatCode = await getWechatLoginCode();
+      onSuccess(await loginWithWechat(wechatCode));
     } catch {
-      setMessage("微信登录暂时不可用，请改用手机号");
-      setMode("phone");
+      setMessage("当前环境无法获取微信授权 code，请在微信小程序或微信授权环境中打开");
     } finally {
       setSubmitting(false);
     }
@@ -658,13 +666,13 @@ function LoginSheet({ onClose, onSuccess }: { onClose: () => void; onSuccess: (s
           <div className="wechat-login">
             <div className="wechat-mark">微</div>
             <strong>使用微信一键登录</strong>
-            <p>正式接入时会通过微信授权 code 换取 openid/session_key。</p>
+            <p>会使用微信授权 code 换取 openid/session_key；普通浏览器无法直接完成。</p>
             <button className="wechat-button" disabled={submitting} onClick={submitWechat}>{submitting ? "登录中..." : "微信登录"}</button>
           </div>
         ) : (
           <div className="phone-login">
             <label>手机号<input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="请输入手机号" inputMode="tel" /></label>
-            <label>验证码<div><input value={code} onChange={(event) => setCode(event.target.value)} placeholder="246810" inputMode="numeric" /><button disabled={submitting} onClick={sendCode}>获取验证码</button></div></label>
+            <label>验证码<div><input value={code} onChange={(event) => setCode(event.target.value)} placeholder="请输入短信验证码" inputMode="numeric" /><button disabled={submitting} onClick={sendCode}>获取验证码</button></div></label>
             <button className="primary-wide" disabled={submitting} onClick={submitPhone}>{submitting ? "登录中..." : "登录"}</button>
           </div>
         )}
@@ -816,6 +824,23 @@ function getRecencyScore(value: string) {
 
 function providerLabel(provider: "wechat" | "phone") {
   return provider === "wechat" ? "微信" : "手机";
+}
+
+function getWechatLoginCode() {
+  return new Promise<string>((resolve, reject) => {
+    const wx = (window as WechatWindow).wx;
+    if (!wx?.login) {
+      reject(new Error("WECHAT_ENV_REQUIRED"));
+      return;
+    }
+    wx.login({
+      fail: reject,
+      success: (result) => {
+        if (result.code) resolve(result.code);
+        else reject(new Error("WECHAT_CODE_MISSING"));
+      }
+    });
+  });
 }
 
 function normalizeText(value: string) {
