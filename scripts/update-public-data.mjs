@@ -9,7 +9,9 @@ const manualMatchesPath = path.join(rootDir, "data/manual/matches.json");
 const villageGuidesPath = path.join(rootDir, "data/manual/village-guides.json");
 const outputPath = path.join(rootDir, "apps/web/public/data/bootstrap.json");
 const imageOutputDir = path.join(rootDir, "apps/web/public/data/images");
+const villageImageOutputDir = path.join(rootDir, "apps/web/public/data/village-images");
 const publicImageBasePath = "/data/images";
+const publicVillageImageBasePath = "/data/village-images";
 const maxBodyChars = Number(process.env.MAX_ARTICLE_BODY_CHARS ?? 1200);
 const matchWindowDays = Number(process.env.MATCH_WINDOW_DAYS ?? 14);
 const imageFallbacks = [
@@ -194,6 +196,38 @@ async function cacheImage(url, id, index) {
     console.warn(`[image] failed: ${url} ${error.message}`);
     return "";
   }
+}
+
+async function cacheVillageImage(guide, index = 0) {
+  const candidates = guide.imageCandidates ?? [];
+  for (const [candidateIndex, candidate] of candidates.entries()) {
+    try {
+      const response = await fetch(candidate.url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 CunChaoDataBot/0.1 (+https://github.com/blake358z/cunchao)"
+        }
+      });
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!contentType.startsWith("image/")) throw new Error(`unexpected content-type ${contentType}`);
+      const ext = imageExtension(candidate.url, contentType);
+      const fileName = `${guide.teamId ?? guide.village ?? `guide-${index}`}-${candidateIndex}.${ext}`.replace(/[^a-zA-Z0-9._-]/g, "-");
+      await fs.mkdir(villageImageOutputDir, { recursive: true });
+      await fs.writeFile(path.join(villageImageOutputDir, fileName), Buffer.from(await response.arrayBuffer()));
+      return {
+        image: `${publicVillageImageBasePath}/${fileName}`,
+        imageCredit: candidate.sourceName,
+        imageSourceUrl: candidate.sourceUrl
+      };
+    } catch (error) {
+      console.warn(`[village-image] failed: ${guide.teamId ?? guide.village} ${candidate.url} ${error.message}`);
+    }
+  }
+  return {
+    image: guide.image,
+    imageCredit: undefined,
+    imageSourceUrl: undefined
+  };
 }
 
 function isRelevant(link, source) {
@@ -412,7 +446,7 @@ function fallbackVillageGuide(teamId, teamName, leagueId) {
   };
 }
 
-function buildTravelGuidesForMatches(futureMatches, guideStore) {
+async function buildTravelGuidesForMatches(futureMatches, guideStore) {
   const guideByTeamId = new Map((guideStore.guides ?? []).map((guide) => [guide.teamId, guide]));
   const cards = [];
   const seen = new Set();
@@ -427,12 +461,15 @@ function buildTravelGuidesForMatches(futureMatches, guideStore) {
       const key = `${match.id}-${side.teamId}`;
       if (seen.has(key)) continue;
       seen.add(key);
+      const cachedImage = await cacheVillageImage(guide, cards.length);
       cards.push({
         id: `guide-${key}`,
         title: `${side.teamName} · ${guide.village}看球攻略`,
         leagueId: match.leagueId,
         region: guide.region,
-        image: guide.image,
+        image: cachedImage.image,
+        imageCredit: cachedImage.imageCredit,
+        imageSourceUrl: cachedImage.imageSourceUrl,
         summary: guide.summary,
         tags: ["比赛村寨", "球队故事", "吃住行"],
         matchId: match.id,
@@ -512,7 +549,7 @@ const scheduleItems = collectedContents.filter((item) => item.type === "article"
 const collectedMatches = scheduleItems.flatMap(extractMatchesFromContent);
 const mergedContents = mergeById(collectedContents, fallbackContents).slice(0, 60);
 const mergedMatches = mergeMatches([...(manualMatches.matches ?? []), ...collectedMatches], fallbackMatches);
-const matchedTravelGuides = buildTravelGuidesForMatches(mergedMatches, villageGuideStore);
+const matchedTravelGuides = await buildTravelGuidesForMatches(mergedMatches, villageGuideStore);
 
 const payload = {
   data: {

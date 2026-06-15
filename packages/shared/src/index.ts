@@ -120,6 +120,8 @@ export interface TravelGuide {
   lodgingTips?: string[];
   foodTips?: string[];
   sourceUrls?: string[];
+  imageCredit?: string;
+  imageSourceUrl?: string;
 }
 
 export interface BookingEvent {

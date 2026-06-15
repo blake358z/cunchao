@@ -342,6 +342,7 @@ function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack:
       <img className="detail-image" src={guide.image} alt="" />
       <h1 className="detail-title">{guide.village ?? guide.title}</h1>
       <p className="meta">{guide.teamName} · {guide.startsAt ? new Date(guide.startsAt).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : guide.region} · {guide.venue}</p>
+      {guide.imageCredit && <p className="image-credit">图片来源：{guide.imageCredit}</p>}
       <div className="list-card prose travel-detail-block">
         <h3>村寨介绍</h3>
         <p>{guide.intro ?? guide.summary}</p>
@@ -357,6 +358,7 @@ function TravelDetail({ guide, onBack, onAction }: { guide: TravelGuide; onBack:
       {guide.sourceUrls?.length ? (
         <div className="source-box">
           <strong>资料来源</strong>
+          {guide.imageSourceUrl && <a href={guide.imageSourceUrl} target="_blank" rel="noreferrer">{guide.imageCredit ?? "图片来源"}</a>}
           {guide.sourceUrls.map((url) => <a href={url} target="_blank" rel="noreferrer" key={url}>{url.replace(/^https?:\/\//, "")}</a>)}
         </div>
       ) : null}

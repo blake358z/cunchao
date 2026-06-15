@@ -14767,7 +14767,9 @@
         "title": "忠诚队 · 忠诚镇看球攻略",
         "leagueId": "gzcunchao",
         "region": "贵州榕江",
-        "image": "/assets/village-scene.jpg",
+        "image": "/data/village-images/team-zhongcheng-0.jpg",
+        "imageCredit": "榕江发布/搜狐号·忠诚镇牛瘪小镇",
+        "imageSourceUrl": "https://www.sohu.com/a/493504502_121106902",
         "summary": "适合把看球、侗寨风情、集镇夜宵和短途自驾串成半日路线。",
         "tags": [
           "比赛村寨",
@@ -14814,7 +14816,9 @@
         "title": "平永队 · 平永镇看球攻略",
         "leagueId": "gzcunchao",
         "region": "贵州榕江",
-        "image": "/assets/village-scene.jpg",
+        "image": "/data/village-images/team-pingyong-0.jpg",
+        "imageCredit": "榕江融媒/澎湃号·平永镇乔亥上寨",
+        "imageSourceUrl": "https://www.thepaper.cn/newsDetail_forward_18338770",
         "summary": "适合关注球队故事、乡镇集市和榕江周边短途路线的球迷。",
         "tags": [
           "比赛村寨",
@@ -14861,7 +14865,9 @@
         "title": "大利队 · 大利侗寨看球攻略",
         "leagueId": "gzcunchao",
         "region": "贵州榕江",
-        "image": "/assets/village-scene.jpg",
+        "image": "/data/village-images/team-dali-0.jpg",
+        "imageCredit": "新华社/新华网·大利侗寨",
+        "imageSourceUrl": "https://www.xinhuanet.com/culture/20240320/6a4f2320497345f49004a4150a6c09ed/c.html",
         "summary": "大利侗寨适合做成“看球+侗寨漫游+拍照”的重点卡片。",
         "tags": [
           "比赛村寨",
@@ -14908,7 +14914,9 @@
         "title": "乐里队 · 乐里镇看球攻略",
         "leagueId": "gzcunchao",
         "region": "贵州榕江",
-        "image": "/assets/village-scene.jpg",
+        "image": "/data/village-images/team-leli-0.jpg",
+        "imageCredit": "新华社/新华网·榕江乡村与村超文旅",
+        "imageSourceUrl": "https://www.news.cn/local/20250106/79b4f7dd77a74db1a733863df3e89a0d/c.html",
         "summary": "适合展示乡镇球队文化、山地村寨风貌和赛前赛后轻攻略。",
         "tags": [
           "比赛村寨",
@@ -14994,7 +15002,7 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-15T05:33:43.516Z",
+  "updatedAt": "2026-06-15T06:14:52.115Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
@@ -15003,8 +15011,8 @@
     "travelGuideCount": 4,
     "matchWindowDays": 14,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-06-15T05:33:43.516Z",
-    "lastAttemptCollectedContentCount": 0,
-    "updateStatus": "retained_existing_low_collection"
+    "lastCheckedAt": "2026-06-15T06:14:52.115Z",
+    "lastAttemptCollectedContentCount": 12,
+    "updateStatus": "updated"
   }
 }
