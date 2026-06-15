@@ -126,6 +126,7 @@ async function collectSource(source) {
       .filter((link) => isRelevant(link, source))
       .filter((link, index, array) => array.findIndex((item) => item.url === link.url) === index)
       .slice(0, source.limit ?? 10);
+    console.log(`[source:${source.id}] ${links.length} candidate links`);
 
     const items = [];
     for (const [index, link] of links.entries()) {
@@ -150,6 +151,7 @@ async function collectSource(source) {
         console.warn(`[source:${source.id}] detail failed: ${link.url} ${error.message}`);
       }
     }
+    console.log(`[source:${source.id}] collected ${items.length} items`);
     return items;
   } catch (error) {
     console.warn(`[source:${source.id}] list failed: ${source.url} ${error.message}`);
@@ -184,8 +186,19 @@ if (collectedContents.length < minimumCollectedItems) {
     const existing = JSON.parse(await fs.readFile(outputPath, "utf8"));
     const existingCount = existing.meta?.collectedContentCount ?? existing.data?.contents?.length ?? 0;
     if (existingCount >= minimumCollectedItems) {
+      const retainedPayload = {
+        ...existing,
+        updatedAt: new Date().toISOString(),
+        meta: {
+          ...existing.meta,
+          lastCheckedAt: new Date().toISOString(),
+          lastAttemptCollectedContentCount: collectedContents.length,
+          updateStatus: "retained_existing_low_collection"
+        }
+      };
+      await fs.writeFile(outputPath, `${JSON.stringify(retainedPayload, null, 2)}\n`, "utf8");
       console.warn(
-        `Collected only ${collectedContents.length} items; keeping existing ${outputPath} with ${existingCount} collected items.`
+        `Collected only ${collectedContents.length} items; retained existing ${outputPath} with ${existingCount} collected items.`
       );
       process.exit(0);
     }
@@ -215,7 +228,10 @@ const payload = {
   meta: {
     sourceCount: sources.contentSources.length,
     collectedContentCount: collectedContents.length,
-    manualMatchCount: manualMatches.matches?.length ?? 0
+    manualMatchCount: manualMatches.matches?.length ?? 0,
+    lastCheckedAt: new Date().toISOString(),
+    lastAttemptCollectedContentCount: collectedContents.length,
+    updateStatus: "updated"
   }
 };
 
