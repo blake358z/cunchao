@@ -9,7 +9,7 @@
         "region": "贵州榕江",
         "season": "2026",
         "description": "以村寨球队、民族文化展演和群众足球为核心的全国热门乡村足球赛事。",
-        "nextHint": "6/15 19:30 忠诚队 vs 平永队"
+        "nextHint": "本周六，贵州村超冠军赛第四轮打响"
       },
       {
         "id": "js-super",
@@ -42,30 +42,7 @@
         "nextHint": "暂无未来两周赛程"
       }
     ],
-    "matches": [
-      {
-        "id": "match-next-1",
-        "leagueId": "gzcunchao",
-        "homeTeamId": "team-zhongcheng",
-        "awayTeamId": "team-pingyong",
-        "homeTeam": "忠诚队",
-        "awayTeam": "平永队",
-        "venue": "榕江一号场",
-        "startsAt": "2026-06-15T19:30:00+08:00",
-        "status": "scheduled"
-      },
-      {
-        "id": "match-next-2",
-        "leagueId": "gzcunchao",
-        "homeTeamId": "team-dali",
-        "awayTeamId": "team-leli",
-        "homeTeam": "大利队",
-        "awayTeam": "乐里队",
-        "venue": "榕江一号场",
-        "startsAt": "2026-06-16T16:00:00+08:00",
-        "status": "scheduled"
-      }
-    ],
+    "matches": [],
     "teams": [
       {
         "id": "team-chejiang",
@@ -16502,17 +16479,18 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-06-16T09:40:33.319Z",
+  "updatedAt": "2026-06-16T16:42:40.139Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
+    "retainedExistingContentCount": 15,
     "collectedMatchCount": 30,
-    "matchCount": 2,
-    "travelGuideCount": 4,
+    "matchCount": 0,
+    "travelGuideCount": 0,
     "matchWindowDays": 14,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-06-16T09:40:33.319Z",
-    "lastAttemptCollectedContentCount": 0,
-    "updateStatus": "retained_existing_low_collection"
+    "lastCheckedAt": "2026-06-16T16:42:40.139Z",
+    "lastAttemptCollectedContentCount": 12,
+    "updateStatus": "updated"
   }
 }

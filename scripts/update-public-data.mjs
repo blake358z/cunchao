@@ -37,6 +37,12 @@ const sources = JSON.parse(await fs.readFile(sourcesPath, "utf8"));
 const manualMatches = JSON.parse(await fs.readFile(manualMatchesPath, "utf8"));
 const villageGuideStore = JSON.parse(await fs.readFile(villageGuidesPath, "utf8"));
 const minimumCollectedItems = Number(process.env.MIN_COLLECTED_ITEMS ?? 3);
+let existingPayload = null;
+try {
+  existingPayload = JSON.parse(await fs.readFile(outputPath, "utf8"));
+} catch {
+  existingPayload = null;
+}
 
 function stripHtml(html) {
   return html
@@ -317,13 +323,31 @@ async function collectSource(source) {
   }
 }
 
-function mergeById(primary, fallback) {
+function mergeById(...groups) {
   const seen = new Set();
-  return [...primary, ...fallback].filter((item) => {
+  return groups.flat().filter((item) => {
     if (seen.has(item.id)) return false;
     seen.add(item.id);
     return true;
   });
+}
+
+function mergeContentItems(collected, existing, fallback) {
+  const existingById = new Map(existing.map((item) => [item.id, item]));
+  const hydrated = collected.map((item) => {
+    const old = existingById.get(item.id);
+    if (!old) return item;
+    const next = { ...old, ...item };
+    const itemUsesFallbackImage = imageFallbacks.includes(item.image);
+    if (itemUsesFallbackImage && old.image) {
+      next.image = old.image;
+      next.imageCredit = old.imageCredit;
+    }
+    if ((!item.body || item.body.length < old.body?.length) && old.body) next.body = old.body;
+    if (!item.summary && old.summary) next.summary = old.summary;
+    return next;
+  });
+  return mergeById(hydrated, existing, fallback);
 }
 
 function startOfChinaToday() {
@@ -522,7 +546,7 @@ const collectedGroups = await Promise.all(sources.contentSources.map(collectSour
 const collectedContents = collectedGroups.flat().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 if (collectedContents.length < minimumCollectedItems) {
   try {
-    const existing = JSON.parse(await fs.readFile(outputPath, "utf8"));
+    const existing = existingPayload ?? JSON.parse(await fs.readFile(outputPath, "utf8"));
     const existingCount = existing.meta?.collectedContentCount ?? existing.data?.contents?.length ?? 0;
     if (existingCount >= minimumCollectedItems) {
       const retainedPayload = {
@@ -547,7 +571,9 @@ if (collectedContents.length < minimumCollectedItems) {
 }
 const scheduleItems = collectedContents.filter((item) => item.type === "article");
 const collectedMatches = scheduleItems.flatMap(extractMatchesFromContent);
-const mergedContents = mergeById(collectedContents, fallbackContents).slice(0, 60);
+const existingContents = existingPayload?.data?.contents ?? [];
+const existingTravelGuides = existingPayload?.data?.travelGuides ?? [];
+const mergedContents = mergeContentItems(collectedContents, existingContents, fallbackContents).slice(0, 60);
 const mergedMatches = mergeMatches([...(manualMatches.matches ?? []), ...collectedMatches], fallbackMatches);
 const matchedTravelGuides = await buildTravelGuidesForMatches(mergedMatches, villageGuideStore);
 
@@ -560,7 +586,7 @@ const payload = {
     contents: mergedContents,
     posts,
     comments,
-    travelGuides: matchedTravelGuides.length ? matchedTravelGuides : travelGuides,
+    travelGuides: matchedTravelGuides.length ? matchedTravelGuides : existingTravelGuides.length ? existingTravelGuides : travelGuides,
     bookingEvents,
     activities
   },
@@ -569,6 +595,7 @@ const payload = {
   meta: {
     sourceCount: sources.contentSources.length,
     collectedContentCount: collectedContents.length,
+    retainedExistingContentCount: existingContents.length,
     collectedMatchCount: collectedMatches.length,
     matchCount: mergedMatches.length,
     travelGuideCount: matchedTravelGuides.length,
