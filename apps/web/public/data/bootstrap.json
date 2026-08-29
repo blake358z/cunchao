@@ -16479,7 +16479,7 @@
     ]
   },
   "source": "external",
-  "updatedAt": "2026-08-28T16:51:09.562Z",
+  "updatedAt": "2026-08-29T07:12:38.041Z",
   "meta": {
     "sourceCount": 3,
     "collectedContentCount": 12,
@@ -16489,7 +16489,7 @@
     "travelGuideCount": 0,
     "matchWindowDays": 14,
     "manualMatchCount": 0,
-    "lastCheckedAt": "2026-08-28T16:51:09.562Z",
+    "lastCheckedAt": "2026-08-29T07:12:38.041Z",
     "lastAttemptCollectedContentCount": 0,
     "updateStatus": "retained_existing_low_collection"
   }
